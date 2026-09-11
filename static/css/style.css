@@ -1654,3 +1654,293 @@ img, svg {
   .hero-stats-row { grid-template-columns: 1fr 1fr; }
   .hero-track-card { padding: 1.5rem; }
 }
+/* =========================
+   MOBILE RESPONSIVE FIX
+   ========================= */
+
+@media (max-width: 768px) {
+
+  html {
+    font-size: 14px;
+  }
+
+  .container,
+  .container-fluid {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  /* Navbar */
+  .nav-container {
+    height: 60px;
+  }
+
+  .brand-link {
+    font-size: 1.05rem;
+  }
+
+  .brand-link .logo-icon {
+    height: 32px;
+  }
+
+  .nav-actions {
+    gap: 0.5rem;
+  }
+
+  /* Hero */
+  .hero-section {
+    padding: 2.5rem 0 3rem;
+  }
+
+  .hero-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .hero-title {
+    font-size: 2rem;
+    line-height: 1.2;
+  }
+
+  .hero-desc {
+    font-size: 0.95rem;
+  }
+
+  .hero-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .hero-actions .btn {
+    width: 100%;
+  }
+
+  /* Stats */
+  .hero-stats-deck {
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+  }
+
+  .hero-stat-card {
+    padding: 0.7rem 0.4rem;
+  }
+
+  .hero-stat-card-num {
+    font-size: 1.05rem;
+  }
+
+  .hero-stat-card-label {
+    font-size: 0.7rem;
+  }
+
+  /* Tracking card */
+  .hero-track-card {
+    padding: 1.25rem;
+    border-radius: 14px;
+  }
+
+  .track-card-title {
+    font-size: 1.15rem;
+  }
+
+  .track-input-box {
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 0.4rem;
+  }
+
+  .track-input-box input {
+    width: 100%;
+    font-size: 0.95rem;
+  }
+
+  .btn-track-primary {
+    width: 100%;
+  }
+
+  /* Sections */
+  .section {
+    padding: 3rem 0;
+  }
+
+  .section-header {
+    margin-bottom: 2rem;
+  }
+
+  .section-title {
+    font-size: 1.7rem;
+  }
+
+  .section-subtitle {
+    font-size: 0.9rem;
+  }
+
+  /* Cards */
+  .cards-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .service-card {
+    padding: 1.35rem;
+  }
+
+  /* Workflow */
+  .workflow-grid {
+    grid-template-columns: 1fr;
+    gap: 0.8rem;
+  }
+
+  .workflow-step {
+    padding: 1.1rem;
+  }
+
+  /* Features */
+  .features-grid {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+
+  /* Contact */
+  .contact-box {
+    grid-template-columns: 1fr;
+    padding: 1.5rem;
+    gap: 1.5rem;
+    border-radius: 16px;
+  }
+
+  .contact-info h3 {
+    font-size: 1.5rem;
+  }
+
+  /* Footer */
+  .footer-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .site-footer {
+    padding: 2.5rem 0 1.5rem;
+  }
+
+  /* Tracking */
+  .tracking-hero {
+    padding: 2rem 0;
+  }
+
+  .tracking-result-header {
+    padding: 1.25rem;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .tracking-id-badge {
+    font-size: 1.1rem;
+  }
+
+  .stepper-container {
+    padding: 1.5rem 1rem;
+  }
+
+  .tracking-details-grid {
+    grid-template-columns: 1fr;
+    padding: 1rem;
+    gap: 0.8rem;
+  }
+
+  /* Admin */
+  .admin-content {
+    padding: 1rem;
+  }
+
+  .admin-topbar {
+    padding: 0 1rem;
+    height: 60px;
+  }
+
+  .topbar-title {
+    font-size: 1.05rem;
+  }
+
+  /* Dashboard */
+  .metrics-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+  }
+
+  .metric-card {
+    padding: 1rem;
+  }
+
+  .metric-value {
+    font-size: 1.5rem;
+  }
+
+  .metric-icon-box {
+    width: 38px;
+    height: 38px;
+    font-size: 1rem;
+  }
+
+  .dashboard-charts-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Forms */
+  .form-grid,
+  .form-grid-3 {
+    grid-template-columns: 1fr;
+    gap: 0.8rem;
+  }
+
+  .form-card {
+    padding: 1.25rem;
+  }
+
+  /* Tables */
+  .table-responsive {
+    overflow-x: auto;
+  }
+
+  .data-table {
+    min-width: 650px;
+  }
+
+  /* Receipt */
+  .receipt-wrapper {
+    margin: 1rem auto;
+    padding: 0 0.5rem;
+  }
+
+  .receipt-card {
+    padding: 1rem;
+  }
+
+  .receipt-header-row {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .receipt-lr-box {
+    text-align: left;
+  }
+
+  .receipt-grid-parties {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .receipt-table {
+    font-size: 0.8rem;
+  }
+
+  .receipt-table th,
+  .receipt-table td {
+    padding: 0.5rem;
+  }
+
+  .receipt-signatures {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+}
