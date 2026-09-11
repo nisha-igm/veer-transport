@@ -1,8 +1,9 @@
+.barcode-bar.space { background: transparent; width: 3px; }
+
 /* ==========================================================================
    SURAT EXPRESS - TRANSPORT & PARCEL MANAGEMENT SYSTEM
    Complete Modern Vanilla CSS3 Styling
    ========================================================================== */
-
 :root {
   /* Brand Palette */
   --primary-50: #eff6ff;
@@ -77,14 +78,18 @@ html {
   font-family: var(--font-sans);
   background-color: var(--slate-50);
   color: var(--slate-800);
+  width: 100%;
+  overflow-x: hidden; 
 }
 
 body {
+  width: 100%;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
 }
 
 a {
@@ -1942,5 +1947,34 @@ img, svg {
   .receipt-signatures {
     grid-template-columns: 1fr;
     gap: 1rem;
+  }
+}
+@media (max-width: 768px) {
+  /* ... aapke purane media query rules ... */
+
+  .hero-track-card {
+    padding: 1.25rem 1rem;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .track-input-box {
+    flex-direction: column;
+    padding: 0.5rem;
+    gap: 0.5rem;
+  }
+
+  .btn-track-primary {
+    width: 100%;
+  }
+
+  .sample-pills-wrap {
+    overflow-x: auto;
+    flex-wrap: wrap;
+    max-width: 100%;
+  }
+
+  .container, .container-fluid {
+    padding: 0 1rem;
   }
 }
