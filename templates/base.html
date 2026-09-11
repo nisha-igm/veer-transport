@@ -1,0 +1,122 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ title|default:"Veer Transport" }} | Surat to Ahmedabad Parcel Management</title>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <link rel="stylesheet" href="{% static 'css/print.css' %}" media="print">
+  <link rel="icon" type="image/svg+xml" href="{% static 'images/logo.svg' %}">
+  {% block extra_head %}{% endblock %}
+</head>
+<body>
+
+  <!-- Public Navigation Bar -->
+  <header class="public-nav">
+    <div class="container nav-container">
+      <a href="{% url 'home' %}" class="brand-link">
+        <img src="{% static 'images/logo.svg' %}" alt="Veer Transport Logo" class="logo-icon">
+      </a>
+
+      <nav>
+        <ul class="nav-links">
+          <li><a href="{% url 'home' %}" class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}">Home</a></li>
+          <li><a href="{% url 'home' %}#about" class="nav-link">About</a></li>
+          <li><a href="{% url 'home' %}#services" class="nav-link">Services</a></li>
+          <li><a href="{% url 'home' %}#workflow" class="nav-link">How It Works</a></li>
+          <li><a href="{% url 'home' %}#contact" class="nav-link">Contact</a></li>
+        </ul>
+      </nav>
+
+      <div class="nav-actions">
+        {% if user.is_authenticated %}
+          <a href="{% url 'dashboard' %}" class="btn btn-primary btn-sm">
+            ⚡ Staff Dashboard
+          </a>
+        {% else %}
+          <a href="{% url 'admin_login' %}" class="btn btn-dark btn-sm">
+            🔒 Staff Login
+          </a>
+        {% endif %}
+        <button class="menu-toggle-btn" aria-label="Toggle navigation menu">
+          ☰
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Flash Message Alerts -->
+  <div class="container messages-container" style="margin-top: 1rem;">
+    {% if messages %}
+      {% for message in messages %}
+        <div class="alert alert-{{ message.tags|default:'info' }}">
+          <span>{{ message }}</span>
+          <button type="button" class="modal-close" onclick="this.parentElement.remove()" style="font-size: 1.2rem;">&times;</button>
+        </div>
+      {% endfor %}
+    {% endif %}
+  </div>
+
+  <!-- Main Content Block -->
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- Site Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <h4>VEER TRANSPORT</h4>
+          <p>
+            Surat's dedicated daily express parcel transportation and goods distribution service operating exclusively on the <strong>Surat ➔ Ahmedabad</strong> commercial corridor with fast local tempo market delivery.
+          </p>
+          <div style="margin-top: 1rem; color: #94a3b8; font-size: 0.85rem; line-height: 1.6;">
+            📍 <strong>Booking Office:</strong> Godown No 14 15, Kewal Estate, Saroli, Surat<br>
+            ⏰ <strong>Working Hours:</strong> Mon – Sat: 8:00 AM – 9:00 PM (Sunday Closed)<br>
+            📞 +91 98250 12345 | ✉️ dispatch@veertransport.local
+          </div>
+        </div>
+
+        <div class="footer-col">
+          <h5>Quick Navigation</h5>
+          <ul class="footer-links">
+            <li><a href="{% url 'home' %}">Home Portal</a></li>
+            <li><a href="{% url 'public_tracking' %}">Consignment Tracking</a></li>
+            <li><a href="{% url 'home' %}#services">Transport Services</a></li>
+            <li><a href="{% url 'home' %}#workflow">Operating Workflow</a></li>
+            <li><a href="{% url 'admin_login' %}">Staff Login</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h5>Key Routes &amp; Hubs</h5>
+          <ul class="footer-links">
+            <li><a href="#">Surat (Saroli) ➔ Ahmedabad Hub</a></li>
+            <li><a href="#">➔ Maskati Cloth Market</a></li>
+            <li><a href="#">➔ New Cloth Market / Sarangpur</a></li>
+            <li><a href="#">➔ Kalupur Wholesale Market</a></li>
+            <li><a href="#">➔ Narol GIDC / Odhav Industrial</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h5>Staff &amp; Administration</h5>
+          <p style="font-size: 0.85rem; margin-bottom: 0.75rem;">Authorized transport desk operators can login to record incoming goods at Saroli godown, manage line trucks, and dispatch local tempos in Ahmedabad.</p>
+          <a href="{% url 'admin_login' %}" class="btn btn-secondary btn-sm" style="width: 100%; justify-content: center;">
+            Staff Portal Access
+          </a>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        &copy; {% now "Y" %} Veer Transport. All rights reserved. Surat to Ahmedabad Daily Freight &amp; Lorry Receipt System.
+      </div>
+    </div>
+  </footer>
+
+  <script src="{% static 'js/script.js' %}"></script>
+  {% block extra_js %}{% endblock %}
+</body>
+</html>

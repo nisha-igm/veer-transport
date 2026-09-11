@@ -1,0 +1,187 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lorry Receipt - {{ parcel.consignment_number }} | Veer Transport</title>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <link rel="stylesheet" href="{% static 'css/print.css' %}">
+  <link rel="icon" type="image/svg+xml" href="{% static 'images/logo.svg' %}">
+</head>
+<body style="background-color: var(--slate-100);">
+
+  <!-- Non-print Action Bar -->
+  <div class="no-print" style="background: #ffffff; border-bottom: 1px solid var(--slate-200); padding: 1rem 0; position: sticky; top: 0; z-index: 50;">
+    <div class="container" style="display: flex; justify-content: space-between; align-items: center;">
+      <a href="{% url 'parcel_detail' parcel.pk %}" class="btn btn-secondary btn-sm">
+        &larr; Back to Consignment Details
+      </a>
+      <div style="display: flex; gap: 0.75rem;">
+        <button type="button" onclick="window.print()" class="btn btn-primary btn-lg" style="box-shadow: var(--shadow-md);">
+          🖨️ Print Consignment Receipt / LR
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Printable Receipt Canvas -->
+  <div class="receipt-wrapper">
+    <div class="receipt-card">
+      
+      <!-- Company Header Row -->
+      <div class="receipt-header-row">
+        <div class="receipt-company">
+          <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.25rem;">
+            <img src="{% static 'images/logo.svg' %}" alt="Logo" style="height: 38px;">
+          </div>
+          <p>
+            <strong>VEER TRANSPORT (SURAT ➔ AHMEDABAD PARCEL SERVICE)</strong><br>
+            Godown No 14 15, Kewal Estate, Saroli, Surat, Gujarat<br>
+            Phone: +91 98250 12345 | GSTIN: 24AAACG9876K1Z1
+          </p>
+        </div>
+
+        <div class="receipt-lr-box">
+          <div class="receipt-lr-title">CONSIGNMENT NOTE / BILTI</div>
+          <div class="receipt-lr-number">{{ parcel.consignment_number }}</div>
+          <div style="font-size: 0.75rem; color: #475569; margin-top: 0.2rem;">
+            Date: <strong>{{ parcel.receiving_date|date:"d/m/Y" }}</strong>
+          </div>
+          <!-- Barcode simulation -->
+          <div class="receipt-barcode">
+            <div class="barcode-bar w-2"></div>
+            <div class="barcode-bar w-1"></div>
+            <div class="barcode-bar space"></div>
+            <div class="barcode-bar w-3"></div>
+            <div class="barcode-bar w-2"></div>
+            <div class="barcode-bar space"></div>
+            <div class="barcode-bar w-1"></div>
+            <div class="barcode-bar w-3"></div>
+            <div class="barcode-bar w-2"></div>
+            <div class="barcode-bar space"></div>
+            <div class="barcode-bar w-2"></div>
+            <div class="barcode-bar w-1"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Parties Box: Consignor & Consignee -->
+      <div class="receipt-grid-parties">
+        <div>
+          <div class="party-box-title">CONSIGNOR / SENDER (FROM)</div>
+          <div style="font-weight: 700; font-size: 1rem; color: #0f172a;">
+            {{ parcel.sender_name }}
+          </div>
+          <div style="font-size: 0.85rem; color: #475569; margin-top: 0.25rem;">
+            Station: <strong>{{ parcel.source }}</strong> ({{ parcel.sender_city }})
+          </div>
+          <div style="font-size: 0.85rem; color: #475569;">
+            Party Name: {{ parcel.get_party_display }}
+          </div>
+        </div>
+
+        <div>
+          <div class="party-box-title">CONSIGNEE / RECEIVER (TO)</div>
+          <div style="font-weight: 700; font-size: 1rem; color: #0f172a;">
+            {{ parcel.receiver_name }}
+          </div>
+          <div style="font-size: 0.85rem; color: #475569; margin-top: 0.25rem;">
+            Destination Station: <strong>{{ parcel.destination }}</strong>
+          </div>
+          <div style="font-size: 0.85rem; color: #475569;">
+            Contact: <strong>{{ parcel.receiver_phone }}</strong>
+          </div>
+        </div>
+      </div>
+
+      <!-- Private Mark & Transit Highlight Bar -->
+      <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; background: #0f172a; color: #ffffff; padding: 0.75rem 1rem; margin-bottom: 1.25rem; border-radius: 2px;">
+        <div>
+          <span style="font-size: 0.72rem; text-transform: uppercase; color: #94a3b8; font-weight: 700;">PRIVATE MARK</span>
+          <div style="font-family: var(--font-mono); font-size: 1.1rem; font-weight: 800; color: #38bdf8;">
+            {{ parcel.private_mark }}
+          </div>
+        </div>
+
+        <div>
+          <span style="font-size: 0.72rem; text-transform: uppercase; color: #94a3b8; font-weight: 700;">VEHICLE / TRUCK NUMBER</span>
+          <div style="font-size: 1rem; font-weight: 700; color: #ffffff;">
+            {{ parcel.get_effective_vehicle_number }}
+          </div>
+        </div>
+
+        <div>
+          <span style="font-size: 0.72rem; text-transform: uppercase; color: #94a3b8; font-weight: 700;">STATUS</span>
+          <div style="font-size: 1rem; font-weight: 700; color: #a7f3d0;">
+            {{ parcel.get_status_display }}
+          </div>
+        </div>
+      </div>
+
+      <!-- Goods Particulars Table -->
+      <table class="receipt-table">
+        <thead>
+          <tr>
+            <th style="width: 10%;">Pkgs</th>
+            <th style="width: 45%;">Description of Goods</th>
+            <th style="width: 20%;">Private Mark</th>
+            <th style="width: 15%;">Actual Wt (kg)</th>
+            <th style="width: 10%;">Freight</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="text-align: center; font-weight: 700; font-size: 1.05rem;">
+              {{ parcel.package_count }}
+            </td>
+            <td>
+              <strong>{{ parcel.goods_description }}</strong>
+              {% if parcel.remarks %}
+                <div style="font-size: 0.75rem; color: #64748b; margin-top: 0.2rem;">
+                  Remarks: {{ parcel.remarks }}
+                </div>
+              {% endif %}
+            </td>
+            <td style="font-family: var(--font-mono); font-weight: 700; color: #1e40af;">
+              {{ parcel.private_mark }}
+            </td>
+            <td style="text-align: right; font-weight: 700;">
+              {{ parcel.weight }} kg
+            </td>
+            <td style="text-align: center; font-weight: 600;">
+              T.B.B. / Paid
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Terms and Conditions -->
+      <div class="receipt-terms">
+        <strong>TERMS &amp; CONDITIONS:</strong>
+        <ol style="margin-left: 1.25rem; margin-top: 0.25rem;">
+          <li>Goods carried at owner's risk. The transport company is not liable for leakage, breakage, or transit delays due to natural calamities.</li>
+          <li>Delivery will only be made upon surrender of this original consignment note copy with recipient signature and stamp.</li>
+          <li>Demurrage charges applicable after 48 hours of goods arrival at destination warehouse.</li>
+          <li>Subject to Surat jurisdiction only.</li>
+        </ol>
+      </div>
+
+      <!-- Signature Blocks -->
+      <div class="receipt-signatures">
+        <div class="sign-box">
+          Consignor / Sender Signature
+        </div>
+        <div class="sign-box">
+          Driver / Transport In-Charge
+        </div>
+        <div class="sign-box">
+          Consignee Signature &amp; Seal
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</body>
+</html>

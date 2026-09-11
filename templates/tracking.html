@@ -1,0 +1,208 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="tracking-hero">
+  <div class="container">
+    <div style="max-width: 680px; margin: 0 auto; text-align: center;">
+      <span class="section-tag">Public Tracking Portal</span>
+      <h1 class="section-title" style="font-size: 2.2rem; margin-bottom: 0.5rem;">
+        Track Consignment &amp; Parcel
+      </h1>
+      <p style="color: var(--slate-600); margin-bottom: 1.75rem;">
+        Enter your unique Consignment Number (e.g. <code>TRN20260001</code>) or registered Private Mark to check real-time movement.
+      </p>
+
+      <form action="{% url 'public_tracking' %}" method="GET" class="track-input-box" style="box-shadow: var(--shadow-md); background: #ffffff; padding: 0.4rem;">
+        <input type="text" name="q" value="{{ query }}" placeholder="Enter Consignment No. (e.g. TRN20260001)" required autofocus style="font-size: 1.1rem;">
+        <button type="submit" class="btn btn-primary btn-lg">
+          Track Now
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="container" style="padding-bottom: 4rem;">
+  
+  {% if parcel %}
+    <!-- Tracking Result Box -->
+    <div class="tracking-result-card">
+      
+      <!-- Top Banner Header -->
+      <div class="tracking-result-header">
+        <div>
+          <div style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: #94a3b8; font-weight: 700;">
+            Consignment / LR Number
+          </div>
+          <div class="tracking-id-badge">{{ parcel.consignment_number }}</div>
+        </div>
+
+        <div style="text-align: right;">
+          <div style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: #94a3b8; font-weight: 700;">
+            Current Status
+          </div>
+          <span class="badge badge-{{ parcel.status|lower }}" style="font-size: 0.9rem; padding: 0.4rem 0.9rem;">
+            {{ parcel.get_status_display }}
+          </span>
+        </div>
+      </div>
+
+      <!-- 6-Stage Visual Milestone Stepper -->
+      <div class="stepper-container">
+        <div class="stepper-track">
+          
+          <!-- Progress line calculated dynamically -->
+          {% if status_step >= 1 %}
+            <div class="stepper-track-progress" style="width: {% if status_step == 1 %}0%{% elif status_step == 2 %}20%{% elif status_step == 3 %}40%{% elif status_step == 4 %}60%{% elif status_step == 5 %}80%{% elif status_step >= 6 %}100%{% endif %};"></div>
+          {% endif %}
+
+          <!-- Step 1: Received -->
+          <div class="stepper-step {% if status_step > 1 %}completed{% elif status_step == 1 %}current{% endif %}">
+            <div class="step-node">{% if status_step > 1 %}✓{% else %}1{% endif %}</div>
+            <div class="step-label">Received</div>
+          </div>
+
+          <!-- Step 2: Sorted -->
+          <div class="stepper-step {% if status_step > 2 %}completed{% elif status_step == 2 %}current{% endif %}">
+            <div class="step-node">{% if status_step > 2 %}✓{% else %}2{% endif %}</div>
+            <div class="step-label">Sorted</div>
+          </div>
+
+          <!-- Step 3: Vehicle Assigned -->
+          <div class="stepper-step {% if status_step > 3 %}completed{% elif status_step == 3 %}current{% endif %}">
+            <div class="step-node">{% if status_step > 3 %}✓{% else %}3{% endif %}</div>
+            <div class="step-label">Vehicle Assigned</div>
+          </div>
+
+          <!-- Step 4: In Transit -->
+          <div class="stepper-step {% if status_step > 4 %}completed{% elif status_step == 4 %}current{% endif %}">
+            <div class="step-node">{% if status_step > 4 %}✓{% else %}4{% endif %}</div>
+            <div class="step-label">In Transit</div>
+          </div>
+
+          <!-- Step 5: Out for Delivery -->
+          <div class="stepper-step {% if status_step > 5 %}completed{% elif status_step == 5 %}current{% endif %}">
+            <div class="step-node">{% if status_step > 5 %}✓{% else %}5{% endif %}</div>
+            <div class="step-label">Out for Delivery</div>
+          </div>
+
+          <!-- Step 6: Delivered -->
+          <div class="stepper-step {% if status_step >= 6 %}completed current{% endif %}">
+            <div class="step-node">{% if status_step >= 6 %}✓{% else %}6{% endif %}</div>
+            <div class="step-label">Delivered</div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Public Sanitized Parcel Details Grid -->
+      <div class="tracking-details-grid">
+        
+        <div class="track-info-item">
+          <div class="track-info-label">Party / Client</div>
+          <div class="track-info-val">{{ parcel.get_party_display }}</div>
+          <div style="margin-top: 0.35rem;">
+            <span class="mark-badge">Mark: {{ parcel.private_mark }}</span>
+          </div>
+        </div>
+
+        <div class="track-info-item">
+          <div class="track-info-label">Route Corridor</div>
+          <div class="track-info-val">
+            {{ parcel.source }} &rarr; {{ parcel.destination }}
+          </div>
+        </div>
+
+        <div class="track-info-item">
+          <div class="track-info-label">Package Count &amp; Goods</div>
+          <div class="track-info-val">{{ parcel.package_count }} Package(s)</div>
+          <div style="font-size: 0.85rem; color: var(--slate-600); margin-top: 0.2rem;">
+            {{ parcel.goods_description|truncatechars:45 }}
+          </div>
+        </div>
+
+        <div class="track-info-item">
+          <div class="track-info-label">Assigned Vehicle</div>
+          <div class="track-info-val">
+            {{ parcel.get_effective_vehicle_number }}
+          </div>
+        </div>
+
+        <div class="track-info-item">
+          <div class="track-info-label">Receiving Date</div>
+          <div class="track-info-val">{{ parcel.receiving_date|date:"d M, Y" }}</div>
+        </div>
+
+        <div class="track-info-item">
+          <div class="track-info-label">Expected / Actual Delivery</div>
+          <div class="track-info-val" style="color: var(--primary-700);">
+            {% if parcel.status == 'DELIVERED' %}
+              Delivered on {{ parcel.actual_delivery_date|date:"d M, Y H:i" }}
+            {% elif parcel.expected_delivery_date %}
+              Expected: {{ parcel.expected_delivery_date|date:"d M, Y" }}
+            {% else %}
+              In Process
+            {% endif %}
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Public Movement History Audit -->
+      <div style="padding: 2rem; border-top: 1px solid var(--slate-200); background: #ffffff;">
+        <h3 style="font-size: 1.1rem; font-weight: 700; color: var(--slate-900); margin-bottom: 1.25rem;">
+          Movement &amp; Status Checkpoints
+        </h3>
+
+        <div class="timeline">
+          {% for hist in history %}
+            <div class="timeline-item {% if forloop.first %}active{% endif %}">
+              <div class="timeline-dot"></div>
+              <div class="timeline-content">
+                <div class="timeline-header">
+                  <span class="badge badge-{{ hist.status|lower }}">
+                    {{ hist.status|title }}
+                  </span>
+                  <span class="timeline-time">{{ hist.timestamp|date:"d M Y, h:i A" }}</span>
+                </div>
+                <div class="timeline-body">
+                  {% if hist.location %}
+                    <strong>Location:</strong> {{ hist.location }} &bull; 
+                  {% endif %}
+                  {{ hist.remarks|default:"Shipment processed at checkpoint." }}
+                </div>
+              </div>
+            </div>
+          {% empty %}
+            <p style="color: var(--slate-500); font-size: 0.88rem;">No checkpoint movement logged yet.</p>
+          {% endfor %}
+        </div>
+      </div>
+
+    </div>
+
+  {% elif query %}
+    <div style="text-align: center; padding: 4rem 1rem; background: #ffffff; border-radius: var(--radius-lg); border: 1px solid var(--slate-200); margin-top: 2rem;">
+      <div style="font-size: 3rem; margin-bottom: 1rem;">🔍</div>
+      <h3 style="font-size: 1.4rem; font-weight: 700; color: var(--slate-900);">Consignment Not Found</h3>
+      <p style="color: var(--slate-600); max-width: 480px; margin: 0.5rem auto 1.5rem;">
+        No active consignment found matching "<strong>{{ query }}</strong>". Please verify your consignment number or private mark.
+      </p>
+      <a href="{% url 'public_tracking' %}" class="btn btn-secondary">
+        Try Another Search
+      </a>
+    </div>
+  {% else %}
+    <!-- Initial State Guidance -->
+    <div style="text-align: center; padding: 3rem 1rem; margin-top: 2rem;">
+      <p style="color: var(--slate-500); font-size: 0.95rem;">
+        Enter your consignment number above to see real-time transit status and delivery updates.
+      </p>
+    </div>
+  {% endif %}
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div style="background: radial-gradient(120% 120% at 50% 10%, #1e3a8a 0%, #0f172a 100%); min-height: calc(100vh - 180px); display: flex; align-items: center; justify-content: center; padding: 3rem 1rem;">
+  
+  <div style="background: #ffffff; border-radius: var(--radius-xl); box-shadow: var(--shadow-xl); max-width: 440px; width: 100%; padding: 2.5rem; border: 1px solid rgba(255,255,255,0.2);">
+    
+    <div style="text-align: center; margin-bottom: 2rem;">
+      <img src="{% static 'images/logo.svg' %}" alt="Logo" style="height: 48px; margin-bottom: 1rem;">
+      <h2 style="font-size: 1.4rem; font-weight: 800; color: var(--slate-900);">Staff Portal Login</h2>
+      <p style="font-size: 0.85rem; color: var(--slate-500); margin-top: 0.25rem;">
+        Enter credentials to access transport desk &amp; parcel management
+      </p>
+    </div>
+
+    <form method="POST" action="{% url 'admin_login' %}">
+      {% csrf_token %}
+      {% if request.GET.next %}
+        <input type="hidden" name="next" value="{{ request.GET.next }}">
+      {% endif %}
+
+      <div class="form-group">
+        <label class="form-label required">Username</label>
+        <div class="track-input-box" style="background: #ffffff;">
+          <input type="text" name="username" class="form-input" placeholder="e.g. admin" required autofocus style="border: none;">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label required">Password</label>
+        <div class="track-input-box" style="background: #ffffff;">
+          <input type="password" name="password" class="form-input" placeholder="••••••••" required style="border: none;">
+        </div>
+      </div>
+
+      <div style="margin-top: 1.5rem;">
+        <button type="submit" class="btn btn-primary btn-lg" style="width: 100%;">
+          ⚡ Secure Sign In
+        </button>
+      </div>
+
+      <div style="margin-top: 1.5rem; text-align: center; font-size: 0.82rem; color: var(--slate-500); border-top: 1px solid var(--slate-100); padding-top: 1rem;">
+        Demo Admin Account: <strong>admin</strong> | <strong>admin123</strong>
+      </div>
+    </form>
+
+  </div>
+
+</div>
+{% endblock %}

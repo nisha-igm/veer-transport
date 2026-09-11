@@ -1,0 +1,194 @@
+/* ==========================================================================
+   PRINT STYLESHEET - CONSIGNMENT LORRY RECEIPT (BILTI / LR)
+   ========================================================================== */
+
+@page {
+  size: A4 portrait;
+  margin: 12mm 15mm;
+}
+
+@media print {
+  /* Hide non-printable elements */
+  .public-nav,
+  .admin-sidebar,
+  .admin-topbar,
+  .site-footer,
+  .btn,
+  .no-print,
+  .messages-container,
+  .modal-backdrop {
+    display: none !important;
+  }
+
+  body {
+    background: #ffffff !important;
+    color: #000000 !important;
+    font-size: 11pt !important;
+    line-height: 1.35 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .receipt-container {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+    border: 2px solid #000000 !important;
+  }
+
+  .receipt-table th,
+  .receipt-table td {
+    border-color: #000000 !important;
+  }
+}
+
+/* Screen Preview Styling for Receipt */
+.receipt-wrapper {
+  max-width: 840px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+
+.receipt-card {
+  background: #ffffff;
+  border: 2px solid var(--slate-800);
+  border-radius: 4px;
+  padding: 2rem;
+  box-shadow: var(--shadow-lg);
+  color: var(--slate-900);
+}
+
+.receipt-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  border-bottom: 2px solid var(--slate-800);
+  padding-bottom: 1.25rem;
+  margin-bottom: 1.25rem;
+}
+
+.receipt-company h1 {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--slate-900);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.receipt-company p {
+  font-size: 0.85rem;
+  color: var(--slate-600);
+  margin-top: 0.2rem;
+}
+
+.receipt-lr-box {
+  text-align: right;
+  border: 2px solid var(--slate-900);
+  padding: 0.5rem 1rem;
+  background: var(--slate-50);
+}
+
+.receipt-lr-title {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--slate-600);
+}
+
+.receipt-lr-number {
+  font-family: var(--font-mono);
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: var(--primary-700);
+}
+
+.receipt-grid-parties {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+  border: 1px solid var(--slate-300);
+  padding: 1rem;
+  margin-bottom: 1.25rem;
+  background: var(--slate-50);
+}
+
+.party-box-title {
+  font-size: 0.8rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: var(--slate-500);
+  border-bottom: 1px solid var(--slate-200);
+  padding-bottom: 0.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.receipt-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 1.5rem;
+}
+
+.receipt-table th {
+  background: var(--slate-800);
+  color: #ffffff;
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid var(--slate-800);
+  text-align: left;
+}
+
+.receipt-table td {
+  padding: 0.75rem;
+  border: 1px solid var(--slate-300);
+  font-size: 0.88rem;
+}
+
+.receipt-terms {
+  font-size: 0.72rem;
+  color: var(--slate-600);
+  border-top: 1px solid var(--slate-300);
+  padding-top: 0.75rem;
+  margin-top: 1.5rem;
+  line-height: 1.4;
+}
+
+.receipt-signatures {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 1.5rem;
+  margin-top: 2.5rem;
+  padding-top: 1rem;
+  text-align: center;
+}
+
+.sign-box {
+  border-top: 1px dashed var(--slate-400);
+  padding-top: 0.5rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--slate-700);
+}
+
+/* Mock Barcode */
+.receipt-barcode {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  height: 35px;
+  margin: 0.5rem 0;
+}
+
+.barcode-bar {
+  background: #000;
+  height: 100%;
+  width: 2px;
+}
+
+.barcode-bar.w-1 { width: 1px; }
+.barcode-bar.w-2 { width: 3px; }
+.barcode-bar.w-3 { width: 5px; }
+.barcode-bar.space { background: transparent; width: 3px; }

@@ -1,0 +1,391 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<!-- ==========================================================================
+     HERO SECTION
+     ========================================================================== -->
+<section class="hero-section">
+  <div class="container">
+    <div class="hero-grid">
+      
+      <!-- Left Column: Copy, Horizontal Stats Deck & CTAs -->
+      <div>
+        <div class="hero-badge">
+          <span>🚚</span> Surat ➔ Ahmedabad Dedicated Daily Freight Corridor
+        </div>
+        
+        <h1 class="hero-title">
+          Reliable Transport &amp; <br>
+          <span class="highlight">Parcel Delivery</span>
+        </h1>
+        
+        <p class="hero-desc">
+          High-frequency daily freight movement and safe goods transportation exclusively from <strong>Surat (Saroli Godown) to Ahmedabad</strong> with fast same-day/next-day local tempo distribution to Maskati Market, Kalupur, New Cloth Market, and Narol.
+        </p>
+
+        <!-- Modern Horizontal Card Deck for Key Stats -->
+        <div class="hero-stats-deck">
+          <div class="hero-stat-card">
+            <div class="hero-stat-card-icon">📦</div>
+            <div class="hero-stat-card-num">{{ metrics.total_parcels|default:"1,500+" }}</div>
+            <div class="hero-stat-card-label">Total Parcels</div>
+          </div>
+
+          <div class="hero-stat-card">
+            <div class="hero-stat-card-icon">🏢</div>
+            <div class="hero-stat-card-num">{{ metrics.total_parties|default:"250+" }}</div>
+            <div class="hero-stat-card-label">Customers</div>
+          </div>
+
+          <div class="hero-stat-card">
+            <div class="hero-stat-card-icon">🚚</div>
+            <div class="hero-stat-card-num">{{ metrics.total_vehicles|default:"25+" }}</div>
+            <div class="hero-stat-card-label">Local Tempos</div>
+          </div>
+
+          <div class="hero-stat-card">
+            <div class="hero-stat-card-icon">⚡</div>
+            <div class="hero-stat-card-num">99.8%</div>
+            <div class="hero-stat-card-label">On-Time Delivery</div>
+          </div>
+        </div>
+
+        <!-- Hero Actions -->
+        <div class="hero-actions">
+          <a href="https://wa.me/919825012345?text=Hello%20Veer%20Transport%2C%20I%20would%20like%20to%20inquire%20about%20Surat%20to%20Ahmedabad%20parcel%20booking" target="_blank" class="btn btn-whatsapp btn-lg">
+            <span>💬</span> WhatsApp Inquiry
+          </a>
+          <a href="#services" class="btn btn-secondary btn-lg">
+            <span>📦</span> Our Services
+          </a>
+        </div>
+      </div>
+
+      <!-- Right Column: Quick Tracking Card -->
+      <div>
+        <div class="hero-track-card" id="tracking-box">
+          <div class="track-card-header">
+            <h2 class="track-card-title">
+              <span>📍</span> Live Parcel Tracking
+            </h2>
+            <p class="track-card-subtitle">
+              Enter your unique Consignment / Lorry Receipt (LR) Number
+            </p>
+          </div>
+
+          <form action="{% url 'public_tracking' %}" method="GET" class="track-input-group">
+            <div class="track-input-box">
+              <input type="text" name="q" id="hero-track-input" placeholder="e.g. TRN26028680 or Private Mark" required autofocus>
+              <button type="submit" class="btn-track-primary">
+                <span>🔍</span> Track
+              </button>
+            </div>
+
+            <!-- Clickable Pill Badges with Hover Feedback -->
+            <div class="sample-pills-wrap">
+              <span class="sample-label">Quick Sample:</span>
+              <button type="button" class="sample-pill" data-track="TRN26028680" title="Click to track TRN26028680">TRN26028680</button>
+              <button type="button" class="sample-pill" data-track="TRN26028682" title="Click to track TRN26028682">TRN26028682</button>
+              <button type="button" class="sample-pill" data-track="TRN20260001" title="Click to track TRN20260001">TRN20260001</button>
+              <button type="button" class="sample-pill" data-track="TRN20260002" title="Click to track TRN20260002">TRN20260002</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ==========================================================================
+     SERVICES SECTION
+     ========================================================================== -->
+<section class="section" id="services">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-tag">Surat ➔ Ahmedabad Logistics</span>
+      <h2 class="section-title">Specialized Transport &amp; Freight Services</h2>
+      <p class="section-subtitle">
+        Daily night dispatches from Saroli, Surat reaching Ahmedabad morning distribution hubs on schedule.
+      </p>
+    </div>
+
+    <div class="cards-grid">
+      
+      <div class="service-card">
+        <div class="service-icon-box">📦</div>
+        <h3>Parcel Transportation</h3>
+        <p>
+          Secure transport of textile bales, grey fabrics, and commercial packages from Surat mills directly to Ahmedabad consignees.
+        </p>
+      </div>
+
+      <div class="service-card">
+        <div class="service-icon-box">🏭</div>
+        <h3>Saroli Godown Booking</h3>
+        <p>
+          Spacious loading and receiving facility at Godown No 14 15, Kewal Estate, Saroli with computerized weight and LR generation.
+        </p>
+      </div>
+
+      <div class="service-card">
+        <div class="service-icon-box">🚚</div>
+        <h3>Ahmedabad Local Tempo Distribution</h3>
+        <p>
+          Goods arriving at Ahmedabad hub are swiftly unloaded, sorted by Private Mark, and loaded into local tempos for market delivery.
+        </p>
+      </div>
+
+      <div class="service-card">
+        <div class="service-icon-box">🚪</div>
+        <h3>Market &amp; Doorstep Delivery</h3>
+        <p>
+          Direct delivery to shops in Maskati Cloth Market, Kalupur, Sarangpur New Cloth Market, and Narol GIDC godowns.
+        </p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ==========================================================================
+     HOW IT WORKS - 6-STEP WORKFLOW
+     ========================================================================== -->
+<section class="section" id="workflow" style="background-color: var(--slate-100); border-top: 1px solid var(--slate-200); border-bottom: 1px solid var(--slate-200);">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-tag">Operational Process</span>
+      <h2 class="section-title">How Our Surat ➔ Ahmedabad Service Operates</h2>
+      <p class="section-subtitle">
+        Streamlined goods handling from receiving at Saroli to final handoff across Ahmedabad markets.
+      </p>
+    </div>
+
+    <div class="workflow-grid">
+      
+      <div class="workflow-step">
+        <div class="workflow-num">1</div>
+        <h4>Goods Received</h4>
+        <p>Goods arrive at Godown 14 15, Kewal Estate, Saroli, Surat.</p>
+      </div>
+
+      <div class="workflow-step">
+        <div class="workflow-num">2</div>
+        <h4>Parcel Registered</h4>
+        <p>Party Name, Private Mark, Packages, and Weight recorded with unique LR.</p>
+      </div>
+
+      <div class="workflow-step">
+        <div class="workflow-num">3</div>
+        <h4>Parcel Sorted</h4>
+        <p>Packages sorted for Ahmedabad line loading.</p>
+      </div>
+
+      <div class="workflow-step">
+        <div class="workflow-num">4</div>
+        <h4>Vehicle Assigned</h4>
+        <p>Loaded onto main Surat-Ahmedabad line truck.</p>
+      </div>
+
+      <div class="workflow-step">
+        <div class="workflow-num">5</div>
+        <h4>Out for Delivery</h4>
+        <p>Transferred to local tempo in Ahmedabad for market dispatch.</p>
+      </div>
+
+      <div class="workflow-step">
+        <div class="workflow-num">6</div>
+        <h4>Delivered</h4>
+        <p>Delivered to consignee shop or godown with signed LR receipt.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ==========================================================================
+     WHY CHOOSE US SECTION
+     ========================================================================== -->
+<section class="section features-section" id="about">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-tag">Why Choose Veer Transport</span>
+      <h2 class="section-title">Direct Surat to Ahmedabad Transport Specialists</h2>
+      <p class="section-subtitle">
+        Zero route diversion, direct overnight transit, and specialized textile and parcel handling.
+      </p>
+    </div>
+
+    <div class="features-grid">
+      
+      <div class="feature-item">
+        <div class="feature-icon">🏷️</div>
+        <div>
+          <h4>Private Mark Tracking</h4>
+          <p>
+            Distinct party name and private mark identification (e.g. ABC-458) so bales and cartons are never mixed during sorting.
+          </p>
+        </div>
+      </div>
+
+      <div class="feature-item">
+        <div class="feature-icon">⚡</div>
+        <div>
+          <h4>Direct Overnight Route</h4>
+          <p>
+            Dedicated daily transport line from Surat to Ahmedabad ensuring safe next-morning delivery.
+          </p>
+        </div>
+      </div>
+
+      <div class="feature-item">
+        <div class="feature-icon">🖨️</div>
+        <div>
+          <h4>Printable Lorry Receipts (Bilti)</h4>
+          <p>
+            One-click digital receipt printing with clear party details, private marks, package counts, and signature blocks.
+          </p>
+        </div>
+      </div>
+
+      <div class="feature-item">
+        <div class="feature-icon">🚚</div>
+        <div>
+          <h4>Ahmedabad Local Tempo Fleet</h4>
+          <p>
+            Local distribution tempos ready to deliver directly to Maskati Market, Kalupur, and Narol industrial estates.
+          </p>
+        </div>
+      </div>
+
+      <div class="feature-item">
+        <div class="feature-icon">📊</div>
+        <div>
+          <h4>Real-Time Status History</h4>
+          <p>
+            Every movement checkpoint from Saroli godown to Ahmedabad destination is timestamped and tracked.
+          </p>
+        </div>
+      </div>
+
+      <div class="feature-item">
+        <div class="feature-icon">🛡️</div>
+        <div>
+          <h4>Public Consignment Tracking</h4>
+          <p>
+            Clients can easily track their parcels using LR number without revealing confidential transport details.
+          </p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ==========================================================================
+     CONTACT & INQUIRY SECTION WITH ESTIMATED QUOTATION & WHATSAPP
+     ========================================================================== -->
+<section class="section" id="contact">
+  <div class="container">
+    <div class="contact-box">
+      
+      <!-- Contact Info -->
+      <div class="contact-info">
+        <h3>Connect With Veer Transport Desk</h3>
+        <p>
+          Daily parcel bookings, full-tempo loads, and instant WhatsApp support for the Surat to Ahmedabad transport line:
+        </p>
+
+        <div class="contact-detail-row">
+          <span style="font-size: 1.25rem;">📍</span>
+          <div>
+            <strong>Booking Office &amp; Godown</strong><br>
+            Godown No 14 15, Kewal Estate, Saroli, Surat, Gujarat
+          </div>
+        </div>
+
+        <div class="contact-detail-row">
+          <span style="font-size: 1.25rem;">⏰</span>
+          <div>
+            <strong>Working Hours</strong><br>
+            Mon – Sat: 8:00 AM – 9:00 PM (Sunday Closed)
+          </div>
+        </div>
+
+        <div class="contact-detail-row">
+          <span style="font-size: 1.25rem;">📞</span>
+          <div>
+            <strong>Booking Desk &amp; Helpline</strong><br>
+            +91 98250 12345 / +91 98795 44332
+          </div>
+        </div>
+
+        <div class="contact-detail-row">
+          <span style="font-size: 1.25rem;">🛣️</span>
+          <div>
+            <strong>Operating Route</strong><br>
+            Surat (Saroli) ➔ Ahmedabad (All Wholesale Markets)
+          </div>
+        </div>
+      </div>
+
+      <!-- Booking Inquiry Form with Estimated Quotation & WhatsApp Action -->
+      <div class="contact-form">
+        <h4 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 1.25rem; color: var(--slate-900);">
+          Booking Inquiry &amp; Instant WhatsApp Quote
+        </h4>
+        
+        <form action="{% url 'contact_page' %}" method="POST" id="booking-inquiry-form">
+          {% csrf_token %}
+          
+          <div class="form-group">
+            <label class="form-label required">Your Name / Firm Name</label>
+            <input type="text" name="name" class="form-input" placeholder="e.g. ABC Traders / Ramesh Patel" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label required">Phone / WhatsApp Number</label>
+            <input type="tel" name="phone" class="form-input" placeholder="+91 98765 43210" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Ahmedabad Delivery Market / Area</label>
+            <input type="text" name="destination" class="form-input" value="Ahmedabad - Maskati Market" placeholder="e.g. Maskati Cloth Market, Kalupur, Narol GIDC">
+          </div>
+
+          <div class="form-grid" style="gap: 0.75rem; margin-bottom: 0.5rem;">
+            <div class="form-group" style="margin-bottom: 0;">
+              <label class="form-label required">Estimated Packages</label>
+              <input type="number" name="packages" id="inquiry-packages" class="form-input" min="1" max="500" value="5" placeholder="Packages count">
+            </div>
+
+            <div class="form-group" style="margin-bottom: 0;">
+              <label class="form-label">Estimated Quotation</label>
+              <div class="quotation-preview-box">
+                <span class="quotation-amount" id="quotation-display">₹1,250 - ₹1,750</span>
+              </div>
+              <input type="hidden" name="quotation" id="inquiry-quotation" value="₹1,250 - ₹1,750">
+            </div>
+          </div>
+          <span class="form-helper" style="display: block; margin-bottom: 0.75rem;">
+            *Est. approx ₹250 - ₹350 per textile bale/carton. Exact freight weighed at Saroli Godown.
+          </span>
+
+          <div class="form-group">
+            <label class="form-label required">Cargo Description &amp; Details</label>
+            <textarea name="message" class="form-textarea" rows="2" placeholder="e.g. 5 bales printed sarees, total approx 120 kg. Request morning tempo delivery." required></textarea>
+          </div>
+
+          <button type="submit" class="btn btn-whatsapp btn-lg" style="width: 100%;">
+            <span>📱</span> Send Inquiry &amp; Receive WhatsApp Update
+          </button>
+        </form>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+{% endblock %}

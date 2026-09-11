@@ -1,0 +1,81 @@
+{% extends 'base_admin.html' %}
+{% load static %}
+
+{% block page_title %}{% if is_edit %}Edit Party - {{ party.name }}{% else %}Register New Party / Customer{% endif %}{% endblock %}
+
+{% block content %}
+
+<div style="max-width: 760px; margin: 0 auto;">
+  <div class="form-card">
+    
+    <div style="margin-bottom: 1.5rem; border-bottom: 2px solid var(--slate-100); padding-bottom: 1rem;">
+      <h2 style="font-size: 1.3rem; font-weight: 800; color: var(--slate-900);">
+        {% if is_edit %}Update Party Details{% else %}Add New Trading Party / Customer{% endif %}
+      </h2>
+      <p style="font-size: 0.85rem; color: var(--slate-500);">
+        Manage party identification, default Private Mark, and communication details
+      </p>
+    </div>
+
+    <form method="POST">
+      {% csrf_token %}
+
+      <div class="form-grid">
+        
+        <div class="form-group full-width">
+          <label class="form-label required">Party / Firm Name</label>
+          {{ form.name }}
+          {% if form.name.errors %}
+            <span style="color: var(--danger); font-size: 0.8rem;">{{ form.name.errors }}</span>
+          {% endif %}
+        </div>
+
+        <div class="form-group">
+          <label class="form-label required">Default Private Mark</label>
+          {{ form.private_mark }}
+          <span class="form-helper">Unique mark for this party's parcels (e.g. <code>ABC-458</code>)</span>
+          {% if form.private_mark.errors %}
+            <span style="color: var(--danger); font-size: 0.8rem;">{{ form.private_mark.errors }}</span>
+          {% endif %}
+        </div>
+
+        <div class="form-group">
+          <label class="form-label required">Contact Person</label>
+          {{ form.contact_person }}
+        </div>
+
+        <div class="form-group">
+          <label class="form-label required">Phone Number</label>
+          {{ form.phone }}
+        </div>
+
+        <div class="form-group">
+          <label class="form-label required">City</label>
+          {{ form.city }}
+        </div>
+
+        <div class="form-group full-width">
+          <label class="form-label">GST Number (Optional)</label>
+          {{ form.gst_number }}
+        </div>
+
+        <div class="form-group full-width">
+          <label class="form-label required">Office / Godown Address</label>
+          {{ form.address }}
+        </div>
+
+      </div>
+
+      <div style="margin-top: 1.5rem; display: flex; justify-content: flex-end; gap: 1rem; border-top: 1px solid var(--slate-200); padding-top: 1.25rem;">
+        <a href="{% url 'party_list' %}" class="btn btn-secondary">Cancel</a>
+        <button type="submit" class="btn btn-primary">
+          {% if is_edit %}💾 Update Party Profile{% else %}➕ Register Party{% endif %}
+        </button>
+      </div>
+
+    </form>
+
+  </div>
+</div>
+
+{% endblock %}

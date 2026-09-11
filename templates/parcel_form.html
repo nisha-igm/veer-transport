@@ -1,0 +1,214 @@
+{% extends 'base_admin.html' %}
+{% load static %}
+
+{% block page_title %}{% if is_edit %}Edit Consignment {{ parcel.consignment_number }}{% else %}New Consignment / Goods Entry{% endif %}{% endblock %}
+
+{% block content %}
+
+<div style="max-width: 960px; margin: 0 auto;">
+  
+  <div class="form-card">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 2px solid var(--slate-100); padding-bottom: 1rem;">
+      <div>
+        <h2 style="font-size: 1.3rem; font-weight: 800; color: var(--slate-900);">
+          {% if is_edit %}Update Consignment Record{% else %}Incoming Goods Entry Form{% endif %}
+        </h2>
+        <p style="font-size: 0.85rem; color: var(--slate-500);">
+          Record details for incoming cargo arrived at transport booking desk
+        </p>
+      </div>
+
+      <div style="text-align: right;">
+        <span style="font-size: 0.75rem; text-transform: uppercase; font-weight: 700; color: var(--slate-500);">
+          Consignment / LR Number
+        </span>
+        <div style="font-family: var(--font-mono); font-size: 1.25rem; font-weight: 800; color: var(--primary-700);">
+          {{ next_consignment }}
+        </div>
+      </div>
+    </div>
+
+    <form method="POST" id="parcel-form">
+      {% csrf_token %}
+
+      <!-- Section 1: Party & Private Mark (Explicitly Distinct) -->
+      <div class="form-section-title">
+        <span>🏷️</span> 1. Party &amp; Private Identification Mark
+      </div>
+      <div class="form-grid">
+        
+        <div class="form-group">
+          <label class="form-label">Select Registered Party (Optional)</label>
+          {{ form.party }}
+          <span class="form-helper">Selecting a party automatically loads its default Private Mark</span>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label required">Private Mark (Carton/Bale Mark)</label>
+          {{ form.private_mark }}
+          <span class="form-helper">Crucial identification mark on goods (e.g. <code>ABC-458</code>, <code>SGT-991</code>)</span>
+          {% if form.private_mark.errors %}
+            <span style="color: var(--danger); font-size: 0.8rem;">{{ form.private_mark.errors }}</span>
+          {% endif %}
+        </div>
+
+        <div class="form-group full-width">
+          <label class="form-label">Direct Party Name (if not registered)</label>
+          {{ form.party_name_text }}
+        </div>
+
+      </div>
+
+      <!-- Section 2: Consignor & Consignee Details -->
+      <div class="form-section-title" style="margin-top: 1.5rem;">
+        <span>👥</span> 2. Sender &amp; Receiver Information
+      </div>
+      <div class="form-grid">
+        
+        <div class="form-group">
+          <label class="form-label required">Sender Name (Consignor)</label>
+          {{ form.sender_name }}
+          {% if form.sender_name.errors %}
+            <span style="color: var(--danger); font-size: 0.8rem;">{{ form.sender_name.errors }}</span>
+          {% endif %}
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Sender Origin City</label>
+          {{ form.sender_city }}
+        </div>
+
+        <div class="form-group">
+          <label class="form-label required">Receiver Name (Consignee)</label>
+          {{ form.receiver_name }}
+          {% if form.receiver_name.errors %}
+            <span style="color: var(--danger); font-size: 0.8rem;">{{ form.receiver_name.errors }}</span>
+          {% endif %}
+        </div>
+
+        <div class="form-group">
+          <label class="form-label required">Receiver Contact Number</label>
+          {{ form.receiver_phone }}
+          {% if form.receiver_phone.errors %}
+            <span style="color: var(--danger); font-size: 0.8rem;">{{ form.receiver_phone.errors }}</span>
+          {% endif %}
+        </div>
+
+      </div>
+
+      <!-- Section 3: Route & Cargo Specifics -->
+      <div class="form-section-title" style="margin-top: 1.5rem;">
+        <span>📦</span> 3. Goods &amp; Route Specifics
+      </div>
+      <div class="form-grid-3">
+        
+        <div class="form-group">
+          <label class="form-label required">Source / Booking Origin</label>
+          {{ form.source }}
+        </div>
+
+        <div class="form-group">
+          <label class="form-label required">Destination Hub / City</label>
+          {{ form.destination }}
+          {% if form.destination.errors %}
+            <span style="color: var(--danger); font-size: 0.8rem;">{{ form.destination.errors }}</span>
+          {% endif %}
+        </div>
+
+        <div class="form-group">
+          <label class="form-label required">Number of Packages</label>
+          {{ form.package_count }}
+          {% if form.package_count.errors %}
+            <span style="color: var(--danger); font-size: 0.8rem;">{{ form.package_count.errors }}</span>
+          {% endif %}
+        </div>
+
+        <div class="form-group full-width">
+          <label class="form-label required">Goods Description</label>
+          {{ form.goods_description }}
+          {% if form.goods_description.errors %}
+            <span style="color: var(--danger); font-size: 0.8rem;">{{ form.goods_description.errors }}</span>
+          {% endif %}
+        </div>
+
+        <div class="form-group">
+          <label class="form-label required">Total Weight (kg)</label>
+          {{ form.weight }}
+          {% if form.weight.errors %}
+            <span style="color: var(--danger); font-size: 0.8rem;">{{ form.weight.errors }}</span>
+          {% endif %}
+        </div>
+
+        <div class="form-group">
+          <label class="form-label required">Receiving Date</label>
+          {{ form.receiving_date }}
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Expected Delivery Date</label>
+          {{ form.expected_delivery_date }}
+        </div>
+
+      </div>
+
+      <!-- Section 4: Vehicle Assignment & Logistics -->
+      <div class="form-section-title" style="margin-top: 1.5rem;">
+        <span>🚛</span> 4. Transport Vehicle &amp; Status
+      </div>
+      <div class="form-grid">
+        
+        <div class="form-group">
+          <label class="form-label">Assign Registered Vehicle</label>
+          {{ form.vehicle }}
+          <span class="form-helper">Automatically fills driver name and contact</span>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Vehicle Number (or External Truck)</label>
+          {{ form.vehicle_number_text }}
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Driver Name</label>
+          {{ form.driver_name_text }}
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Driver Contact Number</label>
+          {{ form.driver_contact_text }}
+        </div>
+
+        <div class="form-group">
+          <label class="form-label required">Consignment Status</label>
+          {{ form.status }}
+        </div>
+
+        <div class="form-group full-width">
+          <label class="form-label">Remarks / Special Handling Instructions</label>
+          {{ form.remarks }}
+        </div>
+
+      </div>
+
+      <!-- Form Actions -->
+      <div style="margin-top: 2rem; display: flex; justify-content: flex-end; gap: 1rem; border-top: 1px solid var(--slate-200); padding-top: 1.5rem;">
+        <a href="{% url 'parcel_list' %}" class="btn btn-secondary">Cancel</a>
+        <button type="submit" class="btn btn-primary btn-lg">
+          {% if is_edit %}💾 Save Changes{% else %}⚡ Register Consignment &amp; Generate LR{% endif %}
+        </button>
+      </div>
+
+    </form>
+  </div>
+
+</div>
+
+<!-- JSON Lookups for Party and Vehicle Auto-Fill -->
+<script id="parties-json-data" type="application/json">
+  {{ parties_json|safe }}
+</script>
+<script id="vehicles-json-data" type="application/json">
+  {{ vehicles_json|safe }}
+</script>
+
+{% endblock %}

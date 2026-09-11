@@ -1,0 +1,180 @@
+{% extends 'base_admin.html' %}
+{% load static %}
+
+{% block page_title %}Consignment &amp; Parcel Registry{% endblock %}
+
+{% block content %}
+
+<!-- Search & Multi-Filter Filter Bar -->
+<div class="panel" style="margin-bottom: 1.5rem;">
+  <div class="panel-body" style="padding: 1.25rem;">
+    <form method="GET" action="{% url 'parcel_list' %}" style="display: flex; flex-direction: column; gap: 1rem;">
+      
+      <!-- Top Row: Full-text Search + Actions -->
+      <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+        <div style="flex: 1; min-width: 280px; position: relative;">
+          <input type="text" name="q" value="{{ query }}" id="table-quick-search" class="form-input" placeholder="🔍 Search Consignment #, Party, Private Mark, Receiver, Vehicle, Destination...">
+        </div>
+        <button type="submit" class="btn btn-primary">Search Registry</button>
+        {% if query or status_filter or destination_filter or date_filter %}
+          <a href="{% url 'parcel_list' %}" class="btn btn-secondary">Clear Filters</a>
+        {% endif %}
+      </div>
+
+      <!-- Bottom Row: Segmented Filters -->
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; padding-top: 0.75rem; border-top: 1px solid var(--slate-200);">
+        
+        <div>
+          <label class="form-label" style="font-size: 0.78rem;">Status Filter</label>
+          <select name="status" class="form-select" onchange="this.form.submit()">
+            <option value="">All Statuses</option>
+            {% for code, label in status_choices %}
+              <option value="{{ code }}" {% if status_filter == code %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div>
+          <label class="form-label" style="font-size: 0.78rem;">Destination Hub</label>
+          <select name="destination" class="form-select" onchange="this.form.submit()">
+            <option value="">All Destinations</option>
+            {% for dest in all_destinations %}
+              <option value="{{ dest }}" {% if destination_filter == dest %}selected{% endif %}>{{ dest }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div>
+          <label class="form-label" style="font-size: 0.78rem;">Receiving Period</label>
+          <select name="date_range" class="form-select" onchange="this.form.submit()">
+            <option value="">All Time</option>
+            <option value="today" {% if date_filter == 'today' %}selected{% endif %}>Received Today</option>
+            <option value="week" {% if date_filter == 'week' %}selected{% endif %}>Last 7 Days</option>
+            <option value="month" {% if date_filter == 'month' %}selected{% endif %}>Last 30 Days</option>
+          </select>
+        </div>
+
+      </div>
+
+    </form>
+  </div>
+</div>
+
+<!-- Parcels Data Table Panel -->
+<div class="panel">
+  <div class="panel-header">
+    <h2 class="panel-title">
+      <span>📦</span> Registered Consignments ({{ total_count }})
+    </h2>
+    <div style="display: flex; gap: 0.5rem;">
+      <a href="{% url 'parcel_create' %}" class="btn btn-primary btn-sm">
+        <span>➕</span> Book New Goods
+      </a>
+    </div>
+  </div>
+
+  <div class="panel-body" style="padding: 0;">
+    <div class="table-responsive">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>LR Number</th>
+            <th>Party Name</th>
+            <th>Private Mark</th>
+            <th>Route (Source &rarr; Dest)</th>
+            <th>Goods / Pkgs</th>
+            <th>Weight</th>
+            <th>Vehicle / Driver</th>
+            <th>Booked Date</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for parcel in parcels %}
+            <tr>
+              <td>
+                <a href="{% url 'parcel_detail' parcel.pk %}" style="font-family: var(--font-mono); font-weight: 700; color: var(--primary-700);">
+                  {{ parcel.consignment_number }}
+                </a>
+              </td>
+              <td>
+                <strong>{{ parcel.get_party_display }}</strong>
+                {% if parcel.receiver_name %}
+                  <div style="font-size: 0.78rem; color: var(--slate-500);">To: {{ parcel.receiver_name }}</div>
+                {% endif %}
+              </td>
+              <td>
+                <span class="mark-badge">{{ parcel.private_mark }}</span>
+              </td>
+              <td>
+                <span style="color: var(--slate-600);">{{ parcel.source }}</span> &rarr; <strong>{{ parcel.destination }}</strong>
+              </td>
+              <td>
+                <strong>{{ parcel.package_count }} pkgs</strong><br>
+                <span style="font-size: 0.78rem; color: var(--slate-500);">{{ parcel.goods_description|truncatechars:28 }}</span>
+              </td>
+              <td>
+                {{ parcel.weight }} kg
+              </td>
+              <td>
+                <span style="font-size: 0.85rem; font-weight: 600;">{{ parcel.get_effective_vehicle_number }}</span>
+              </td>
+              <td style="font-size: 0.82rem; color: var(--slate-600); white-space: nowrap;">
+                {{ parcel.receiving_date|date:"d M, Y" }}
+              </td>
+              <td>
+                <span class="badge badge-{{ parcel.status|lower }}">
+                  {{ parcel.get_status_display }}
+                </span>
+              </td>
+              <td>
+                <div style="display: flex; gap: 0.4rem; align-items: center;">
+                  <a href="{% url 'parcel_detail' parcel.pk %}" class="btn btn-secondary btn-sm" title="View 360 Details">
+                    👁️
+                  </a>
+                  <a href="{% url 'parcel_edit' parcel.pk %}" class="btn btn-secondary btn-sm" title="Edit Consignment">
+                    ✏️
+                  </a>
+                  <a href="{% url 'parcel_receipt' parcel.pk %}" class="btn btn-secondary btn-sm" title="Print Lorry Receipt">
+                    🖨️
+                  </a>
+                </div>
+              </td>
+            </tr>
+          {% empty %}
+            <tr>
+              <td colspan="10" style="text-align: center; padding: 3rem; color: var(--slate-500);">
+                No consignments found matching your criteria.
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination Controls -->
+    {% if page_obj.has_other_pages %}
+      <div style="padding: 1rem 1.5rem; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--slate-200);">
+        <span style="font-size: 0.85rem; color: var(--slate-500);">
+          Showing page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+        </span>
+        <div style="display: flex; gap: 0.5rem;">
+          {% if page_obj.has_previous %}
+            <a href="?page={{ page_obj.previous_page_number }}{% if query %}&q={{ query }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}{% if destination_filter %}&destination={{ destination_filter }}{% endif %}{% if date_filter %}&date_range={{ date_filter }}{% endif %}" class="btn btn-secondary btn-sm">
+              &laquo; Previous
+            </a>
+          {% endif %}
+          {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}{% if query %}&q={{ query }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}{% if destination_filter %}&destination={{ destination_filter }}{% endif %}{% if date_filter %}&date_range={{ date_filter }}{% endif %}" class="btn btn-secondary btn-sm">
+              Next &raquo;
+            </a>
+          {% endif %}
+        </div>
+      </div>
+    {% endif %}
+
+  </div>
+</div>
+
+{% endblock %}

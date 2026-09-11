@@ -1,0 +1,258 @@
+{% extends 'base_admin.html' %}
+{% load static %}
+
+{% block page_title %}Operations Overview &amp; Analytics{% endblock %}
+
+{% block content %}
+
+<!-- KPI Summary Cards Grid -->
+<div class="metrics-grid">
+  
+  <div class="metric-card">
+    <div class="metric-data">
+      <h4>Total Parcels</h4>
+      <div class="metric-value">{{ metrics.total_parcels }}</div>
+    </div>
+    <div class="metric-icon-box metric-blue">📦</div>
+  </div>
+
+  <div class="metric-card">
+    <div class="metric-data">
+      <h4>Today's Received</h4>
+      <div class="metric-value">{{ metrics.today_received }}</div>
+    </div>
+    <div class="metric-icon-box metric-cyan">📥</div>
+  </div>
+
+  <div class="metric-card">
+    <div class="metric-data">
+      <h4>Pending Deliveries</h4>
+      <div class="metric-value">{{ metrics.pending_deliveries }}</div>
+    </div>
+    <div class="metric-icon-box metric-amber">⏳</div>
+  </div>
+
+  <div class="metric-card">
+    <div class="metric-data">
+      <h4>Delivered Parcels</h4>
+      <div class="metric-value">{{ metrics.delivered_parcels }}</div>
+    </div>
+    <div class="metric-icon-box metric-green">✅</div>
+  </div>
+
+  <div class="metric-card">
+    <div class="metric-data">
+      <h4>Total Parties</h4>
+      <div class="metric-value">{{ metrics.total_parties }}</div>
+    </div>
+    <div class="metric-icon-box metric-purple">🏢</div>
+  </div>
+
+  <div class="metric-card">
+    <div class="metric-data">
+      <h4>Total Vehicles</h4>
+      <div class="metric-value">{{ metrics.total_vehicles }}</div>
+    </div>
+    <div class="metric-icon-box metric-blue">🚛</div>
+  </div>
+
+</div>
+
+<!-- SVG Dynamic Charts Grid -->
+<div class="dashboard-charts-grid">
+  
+  <!-- Left Chart: Daily Intake Trends -->
+  <div class="panel">
+    <div class="panel-header">
+      <h2 class="panel-title">
+        <span>📈</span> Parcels Received (Last 7 Days)
+      </h2>
+      <span style="font-size: 0.8rem; color: var(--slate-500); font-weight: 600;">Daily Volume</span>
+    </div>
+    <div class="panel-body">
+      <div id="chart-daily-parcels" class="chart-svg-container"></div>
+    </div>
+  </div>
+
+  <!-- Right Chart: Status Distribution -->
+  <div class="panel">
+    <div class="panel-header">
+      <h2 class="panel-title">
+        <span>🍩</span> Status Distribution
+      </h2>
+      <span style="font-size: 0.8rem; color: var(--slate-500); font-weight: 600;">Live Breakdown</span>
+    </div>
+    <div class="panel-body">
+      <div id="chart-status-distribution" class="chart-svg-container"></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Second Row: Top Destinations & Quick Action Bar -->
+<div class="dashboard-charts-grid" style="grid-template-columns: 1fr 1.8fr;">
+  
+  <!-- Top Destinations Progress Chart -->
+  <div class="panel">
+    <div class="panel-header">
+      <h2 class="panel-title">
+        <span>📍</span> Goods By Destination Hub
+      </h2>
+    </div>
+    <div class="panel-body">
+      <div id="chart-destinations" style="padding: 0.5rem 0;"></div>
+    </div>
+  </div>
+
+  <!-- Active Local Tempo Distribution Status -->
+  <div class="panel">
+    <div class="panel-header">
+      <h2 class="panel-title">
+        <span>🚚</span> Local Tempo Dispatches (Last-Mile)
+      </h2>
+      <a href="{% url 'distribution_list' %}" class="btn btn-secondary btn-sm">
+        View Distribution Hub &rarr;
+      </a>
+    </div>
+    <div class="panel-body" style="padding: 0;">
+      <div class="table-responsive">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Consignment</th>
+              <th>Tempo &amp; Driver</th>
+              <th>Destination Area</th>
+              <th>Status</th>
+              <th>Assigned</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for dist in recent_distributions %}
+              <tr>
+                <td>
+                  <a href="{% url 'parcel_detail' dist.parcel.pk %}" style="font-family: var(--font-mono); font-weight: 700;">
+                    {{ dist.parcel.consignment_number }}
+                  </a>
+                </td>
+                <td>
+                  <strong>{{ dist.tempo.vehicle_number|default:"Local Tempo" }}</strong><br>
+                  <span style="font-size: 0.78rem; color: var(--slate-500);">{{ dist.driver_name }}</span>
+                </td>
+                <td>{{ dist.destination_area }}</td>
+                <td>
+                  <span class="badge badge-{{ dist.delivery_status|lower }}">
+                    {{ dist.get_delivery_status_display }}
+                  </span>
+                </td>
+                <td style="font-size: 0.8rem; color: var(--slate-500);">
+                  {{ dist.assigned_date|date:"d M, H:i" }}
+                </td>
+              </tr>
+            {% empty %}
+              <tr>
+                <td colspan="5" style="text-align: center; padding: 2rem; color: var(--slate-400);">
+                  No active local tempo assignments yet.
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Recent Incoming Goods Registry -->
+<div class="panel" style="margin-top: 1.5rem;">
+  <div class="panel-header">
+    <h2 class="panel-title">
+      <span>📦</span> Recent Incoming Consignments
+    </h2>
+    <div style="display: flex; gap: 0.75rem;">
+      <a href="{% url 'parcel_create' %}" class="btn btn-primary btn-sm">
+        <span>➕</span> Book New Goods
+      </a>
+      <a href="{% url 'parcel_list' %}" class="btn btn-secondary btn-sm">
+        View All Registry &rarr;
+      </a>
+    </div>
+  </div>
+
+  <div class="panel-body" style="padding: 0;">
+    <div class="table-responsive">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>LR / Consignment #</th>
+            <th>Party Name</th>
+            <th>Private Mark</th>
+            <th>Route</th>
+            <th>Packages / Wt</th>
+            <th>Vehicle</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for parcel in recent_parcels %}
+            <tr>
+              <td>
+                <a href="{% url 'parcel_detail' parcel.pk %}" style="font-family: var(--font-mono); font-weight: 700; color: var(--primary-700);">
+                  {{ parcel.consignment_number }}
+                </a>
+              </td>
+              <td>
+                <strong>{{ parcel.get_party_display }}</strong>
+              </td>
+              <td>
+                <span class="mark-badge">{{ parcel.private_mark }}</span>
+              </td>
+              <td>
+                {{ parcel.source }} &rarr; <strong>{{ parcel.destination }}</strong>
+              </td>
+              <td>
+                {{ parcel.package_count }} pkgs / {{ parcel.weight }} kg
+              </td>
+              <td>
+                <span style="font-size: 0.85rem;">{{ parcel.get_effective_vehicle_number }}</span>
+              </td>
+              <td>
+                <span class="badge badge-{{ parcel.status|lower }}">
+                  {{ parcel.get_status_display }}
+                </span>
+              </td>
+              <td>
+                <div style="display: flex; gap: 0.4rem;">
+                  <a href="{% url 'parcel_detail' parcel.pk %}" class="btn btn-secondary btn-sm" title="View Details">
+                    👁️
+                  </a>
+                  <a href="{% url 'parcel_receipt' parcel.pk %}" class="btn btn-secondary btn-sm" title="Print LR">
+                    🖨️
+                  </a>
+                </div>
+              </td>
+            </tr>
+          {% empty %}
+            <tr>
+              <td colspan="8" style="text-align: center; padding: 2.5rem; color: var(--slate-400);">
+                No parcels booked yet. Click "Book New Goods" to register the first shipment.
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Embedded JSON for SVG Charts -->
+<script id="chart-data-payload" type="application/json">
+  {{ chart_data_json|safe }}
+</script>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/charts.js' %}"></script>
+{% endblock %}

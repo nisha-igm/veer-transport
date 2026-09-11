@@ -1,0 +1,115 @@
+{% extends 'base_admin.html' %}
+{% load static %}
+
+{% block page_title %}Fleet &amp; Vehicle Management{% endblock %}
+
+{% block content %}
+
+<!-- Filters & Search -->
+<div class="panel" style="margin-bottom: 1.5rem;">
+  <div class="panel-body" style="padding: 1.25rem;">
+    <form method="GET" action="{% url 'vehicle_list' %}" style="display: flex; gap: 1rem; flex-wrap: wrap;">
+      <div style="flex: 1; min-width: 240px;">
+        <input type="text" name="q" value="{{ query }}" class="form-input" placeholder="🔍 Search Vehicle No, Driver, Location...">
+      </div>
+      <div>
+        <select name="type" class="form-select" onchange="this.form.submit()">
+          <option value="">All Vehicle Types</option>
+          {% for code, label in type_choices %}
+            <option value="{{ code }}" {% if type_filter == code %}selected{% endif %}>{{ label }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div>
+        <select name="status" class="form-select" onchange="this.form.submit()">
+          <option value="">All Statuses</option>
+          {% for code, label in status_choices %}
+            <option value="{{ code }}" {% if status_filter == code %}selected{% endif %}>{{ label }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <button type="submit" class="btn btn-primary">Filter</button>
+      {% if query or type_filter or status_filter %}
+        <a href="{% url 'vehicle_list' %}" class="btn btn-secondary">Clear</a>
+      {% endif %}
+    </form>
+  </div>
+</div>
+
+<div class="panel">
+  <div class="panel-header">
+    <h2 class="panel-title">
+      <span>🚛</span> Active Fleet Manifest ({{ vehicles.count }})
+    </h2>
+    <a href="{% url 'vehicle_create' %}" class="btn btn-primary btn-sm">
+      <span>➕</span> Register New Vehicle
+    </a>
+  </div>
+
+  <div class="panel-body" style="padding: 0;">
+    <div class="table-responsive">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Vehicle Number</th>
+            <th>Type</th>
+            <th>Driver Name</th>
+            <th>Driver Contact</th>
+            <th>Capacity</th>
+            <th>Current Location</th>
+            <th>Status</th>
+            <th>Active Loads</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for v in vehicles %}
+            <tr>
+              <td>
+                <a href="{% url 'vehicle_detail' v.pk %}" style="font-family: var(--font-mono); font-weight: 700; color: var(--primary-700);">
+                  {{ v.vehicle_number }}
+                </a>
+              </td>
+              <td>{{ v.get_vehicle_type_display }}</td>
+              <td><strong>{{ v.driver_name }}</strong></td>
+              <td>{{ v.driver_contact }}</td>
+              <td>{{ v.capacity }}</td>
+              <td>{{ v.current_location }}</td>
+              <td>
+                {% if v.status == 'AVAILABLE' %}
+                  <span class="badge badge-delivered">Ready / Available</span>
+                {% elif v.status == 'LOADED' %}
+                  <span class="badge badge-sorted">Loaded</span>
+                {% elif v.status == 'IN_TRANSIT' %}
+                  <span class="badge badge-in-transit">In Transit</span>
+                {% else %}
+                  <span class="badge badge-cancelled">Maintenance</span>
+                {% endif %}
+              </td>
+              <td>
+                <span class="badge badge-received">
+                  {{ v.active_parcels_count }} parcels
+                </span>
+              </td>
+              <td>
+                <div style="display: flex; gap: 0.4rem;">
+                  <a href="{% url 'vehicle_detail' v.pk %}" class="btn btn-secondary btn-sm" title="View Manifest">👁️</a>
+                  <a href="{% url 'vehicle_edit' v.pk %}" class="btn btn-secondary btn-sm" title="Edit Vehicle">✏️</a>
+                  <a href="{% url 'vehicle_delete' v.pk %}" class="btn btn-danger btn-sm" title="Delete Vehicle">🗑️</a>
+                </div>
+              </td>
+            </tr>
+          {% empty %}
+            <tr>
+              <td colspan="9" style="text-align: center; padding: 2.5rem; color: var(--slate-400);">
+                No vehicles registered in fleet yet.
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

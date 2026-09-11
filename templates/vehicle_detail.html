@@ -1,0 +1,129 @@
+{% extends 'base_admin.html' %}
+{% load static %}
+
+{% block page_title %}Vehicle Manifest - {{ vehicle.vehicle_number }}{% endblock %}
+
+{% block content %}
+
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+  <div>
+    <a href="{% url 'vehicle_list' %}" class="btn btn-secondary btn-sm" style="margin-bottom: 0.5rem;">
+      &larr; Back to Fleet
+    </a>
+    <div style="display: flex; align-items: center; gap: 0.75rem;">
+      <h2 style="font-size: 1.6rem; font-weight: 800; color: var(--slate-900);">
+        {{ vehicle.vehicle_number }}
+      </h2>
+      <span class="badge badge-received" style="font-size: 0.85rem;">
+        {{ vehicle.get_vehicle_type_display }}
+      </span>
+    </div>
+  </div>
+
+  <div style="display: flex; gap: 0.75rem;">
+    <a href="{% url 'vehicle_edit' vehicle.pk %}" class="btn btn-secondary">
+      ✏️ Edit Specs &amp; Driver
+    </a>
+  </div>
+</div>
+
+<!-- Specs Card -->
+<div class="panel" style="margin-bottom: 1.5rem;">
+  <div class="panel-header">
+    <h3 class="panel-title"><span>🚛</span> Specifications &amp; Driver Details</h3>
+    <div>
+      Status: 
+      {% if vehicle.status == 'AVAILABLE' %}
+        <span class="badge badge-delivered">Ready / Available</span>
+      {% elif vehicle.status == 'LOADED' %}
+        <span class="badge badge-sorted">Loaded</span>
+      {% elif vehicle.status == 'IN_TRANSIT' %}
+        <span class="badge badge-in-transit">In Transit</span>
+      {% else %}
+        <span class="badge badge-cancelled">Under Maintenance</span>
+      {% endif %}
+    </div>
+  </div>
+  <div class="panel-body">
+    <div class="form-grid">
+      <div>
+        <div class="track-info-label">Assigned Driver</div>
+        <div class="track-info-val">{{ vehicle.driver_name }}</div>
+      </div>
+      <div>
+        <div class="track-info-label">Driver Contact</div>
+        <div class="track-info-val">{{ vehicle.driver_contact }}</div>
+      </div>
+      <div>
+        <div class="track-info-label">Payload Capacity</div>
+        <div class="track-info-val">{{ vehicle.capacity }}</div>
+      </div>
+      <div>
+        <div class="track-info-label">Current Yard / Location</div>
+        <div class="track-info-val">{{ vehicle.current_location }}</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Assigned Consignments Manifest -->
+<div class="panel">
+  <div class="panel-header">
+    <h3 class="panel-title">
+      <span>📦</span> Assigned Cargo Manifest ({{ assigned_parcels.count }})
+    </h3>
+  </div>
+  <div class="panel-body" style="padding: 0;">
+    <div class="table-responsive">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>LR Number</th>
+            <th>Party Name</th>
+            <th>Private Mark</th>
+            <th>Route</th>
+            <th>Packages / Wt</th>
+            <th>Goods</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for p in assigned_parcels %}
+            <tr>
+              <td>
+                <a href="{% url 'parcel_detail' p.pk %}" style="font-family: var(--font-mono); font-weight: 700; color: var(--primary-700);">
+                  {{ p.consignment_number }}
+                </a>
+              </td>
+              <td><strong>{{ p.get_party_display }}</strong></td>
+              <td><span class="mark-badge">{{ p.private_mark }}</span></td>
+              <td>{{ p.source }} &rarr; <strong>{{ p.destination }}</strong></td>
+              <td>{{ p.package_count }} pkgs / {{ p.weight }} kg</td>
+              <td>{{ p.goods_description|truncatechars:25 }}</td>
+              <td>
+                <span class="badge badge-{{ p.status|lower }}">
+                  {{ p.get_status_display }}
+                </span>
+              </td>
+              <td>
+                <div style="display: flex; gap: 0.4rem;">
+                  <a href="{% url 'parcel_detail' p.pk %}" class="btn btn-secondary btn-sm" title="View Details">👁️</a>
+                  <a href="{% url 'parcel_receipt' p.pk %}" class="btn btn-secondary btn-sm" title="Print Receipt">🖨️</a>
+                </div>
+              </td>
+            </tr>
+          {% empty %}
+            <tr>
+              <td colspan="8" style="text-align: center; padding: 2.5rem; color: var(--slate-400);">
+                No active cargo assigned to this vehicle currently.
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

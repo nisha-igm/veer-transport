@@ -1,0 +1,78 @@
+{% extends 'base_admin.html' %}
+{% load static %}
+
+{% block page_title %}{% if is_edit %}Edit Vehicle - {{ vehicle.vehicle_number }}{% else %}Register New Transport Vehicle / Tempo{% endif %}{% endblock %}
+
+{% block content %}
+
+<div style="max-width: 760px; margin: 0 auto;">
+  <div class="form-card">
+    
+    <div style="margin-bottom: 1.5rem; border-bottom: 2px solid var(--slate-100); padding-bottom: 1rem;">
+      <h2 style="font-size: 1.3rem; font-weight: 800; color: var(--slate-900);">
+        {% if is_edit %}Update Fleet Vehicle Details{% else %}Add Line Truck or Distribution Tempo{% endif %}
+      </h2>
+      <p style="font-size: 0.85rem; color: var(--slate-500);">
+        Register vehicle specifications, driver contacts, and current deployment status
+      </p>
+    </div>
+
+    <form method="POST">
+      {% csrf_token %}
+
+      <div class="form-grid">
+        
+        <div class="form-group">
+          <label class="form-label required">Vehicle Registration Number</label>
+          {{ form.vehicle_number }}
+          {% if form.vehicle_number.errors %}
+            <span style="color: var(--danger); font-size: 0.8rem;">{{ form.vehicle_number.errors }}</span>
+          {% endif %}
+        </div>
+
+        <div class="form-group">
+          <label class="form-label required">Vehicle Category / Type</label>
+          {{ form.vehicle_type }}
+        </div>
+
+        <div class="form-group">
+          <label class="form-label required">Assigned Driver Full Name</label>
+          {{ form.driver_name }}
+        </div>
+
+        <div class="form-group">
+          <label class="form-label required">Driver Phone Number</label>
+          {{ form.driver_contact }}
+        </div>
+
+        <div class="form-group">
+          <label class="form-label required">Payload Capacity</label>
+          {{ form.capacity }}
+          <span class="form-helper">e.g. <code>9.5 Tons / 400 Boxes</code> or <code>1.5 Tons</code></span>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label required">Current Hub / Location</label>
+          {{ form.current_location }}
+        </div>
+
+        <div class="form-group full-width">
+          <label class="form-label required">Availability Status</label>
+          {{ form.status }}
+        </div>
+
+      </div>
+
+      <div style="margin-top: 1.5rem; display: flex; justify-content: flex-end; gap: 1rem; border-top: 1px solid var(--slate-200); padding-top: 1.25rem;">
+        <a href="{% url 'vehicle_list' %}" class="btn btn-secondary">Cancel</a>
+        <button type="submit" class="btn btn-primary">
+          {% if is_edit %}💾 Update Vehicle{% else %}➕ Register Vehicle to Fleet{% endif %}
+        </button>
+      </div>
+
+    </form>
+
+  </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 100" fill="none">
+  <!-- Truck & Speed Lines Icon -->
+  <g transform="translate(10, 15)">
+    <!-- Motion lines -->
+    <path d="M5 25 H 25" stroke="#38bdf8" stroke-width="4" stroke-linecap="round" />
+    <path d="M0 40 H 20" stroke="#38bdf8" stroke-width="4" stroke-linecap="round" opacity="0.7" />
+    <path d="M8 55 H 28" stroke="#38bdf8" stroke-width="4" stroke-linecap="round" opacity="0.4" />
+    
+    <!-- Cargo Box -->
+    <rect x="35" y="10" width="48" height="42" rx="4" fill="#1e3a8a" stroke="#3b82f6" stroke-width="2" />
+    <path d="M47 18 L71 44 M71 18 L47 44" stroke="#60a5fa" stroke-width="2" stroke-dasharray="2 2" />
+    <rect x="52" y="24" width="14" height="14" rx="2" fill="#3b82f6" />
+    
+    <!-- Truck Cab -->
+    <path d="M83 24 H 100 L 112 38 V 52 H 83 Z" fill="#2563eb" />
+    <!-- Cab Window -->
+    <path d="M87 28 H 98 L 106 38 H 87 Z" fill="#93c5fd" />
+    
+    <!-- Wheels -->
+    <circle cx="50" cy="54" r="8" fill="#0f172a" stroke="#64748b" stroke-width="2" />
+    <circle cx="50" cy="54" r="3" fill="#f8fafc" />
+    
+    <circle cx="98" cy="54" r="8" fill="#0f172a" stroke="#64748b" stroke-width="2" />
+    <circle cx="98" cy="54" r="3" fill="#f8fafc" />
+  </g>
+  
+  <!-- Text Brand -->
+  <text x="145" y="46" font-family="system-ui, -apple-system, sans-serif" font-weight="800" font-size="28" fill="#0f172a" letter-spacing="-0.5">
+    VEER<tspan fill="#2563eb">TRANSPORT</tspan>
+  </text>
+  <text x="145" y="68" font-family="system-ui, -apple-system, sans-serif" font-weight="600" font-size="11" fill="#64748b" letter-spacing="1.2">
+    SURAT ➔ AHMEDABAD PARCEL SERVICE
+  </text>
+</svg>

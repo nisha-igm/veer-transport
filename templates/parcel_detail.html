@@ -1,0 +1,286 @@
+{% extends 'base_admin.html' %}
+{% load static %}
+
+{% block page_title %}Consignment #{{ parcel.consignment_number }}{% endblock %}
+
+{% block content %}
+
+<!-- Action Header Bar -->
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+  <div>
+    <a href="{% url 'parcel_list' %}" class="btn btn-secondary btn-sm" style="margin-bottom: 0.5rem;">
+      &larr; Back to Registry
+    </a>
+    <div style="display: flex; align-items: center; gap: 0.75rem;">
+      <h2 style="font-size: 1.6rem; font-weight: 800; color: var(--slate-900);">
+        {{ parcel.consignment_number }}
+      </h2>
+      <button class="btn btn-secondary btn-sm btn-copy-lr" data-copy="{{ parcel.consignment_number }}" title="Copy Number">
+        📋 Copy
+      </button>
+      <span class="badge badge-{{ parcel.status|lower }}" style="font-size: 0.85rem; padding: 0.35rem 0.85rem;">
+        {{ parcel.get_status_display }}
+      </span>
+    </div>
+  </div>
+
+  <div style="display: flex; gap: 0.75rem;">
+    <button type="button" class="btn btn-primary" data-modal-target="status-update-modal">
+      ⚡ Update Status
+    </button>
+    <a href="{% url 'parcel_receipt' parcel.pk %}" class="btn btn-secondary">
+      🖨️ Print Receipt / LR
+    </a>
+    <a href="{% url 'parcel_edit' parcel.pk %}" class="btn btn-secondary">
+      ✏️ Edit
+    </a>
+    <a href="{% url 'parcel_delete' parcel.pk %}" class="btn btn-danger btn-sm">
+      🗑️
+    </a>
+  </div>
+</div>
+
+<!-- Main 360 Information Grid -->
+<div class="detail-layout-grid">
+  
+  <!-- Left Column: Details Cards -->
+  <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+    
+    <!-- 1. Parcel Information -->
+    <div class="panel">
+      <div class="panel-header">
+        <h3 class="panel-title"><span>📦</span> Parcel Information</h3>
+        <span class="mark-badge">Mark: {{ parcel.private_mark }}</span>
+      </div>
+      <div class="panel-body">
+        <div class="form-grid">
+          <div>
+            <div class="track-info-label">Consignment / LR No.</div>
+            <div class="track-info-val" style="font-family: var(--font-mono); color: var(--primary-700);">
+              {{ parcel.consignment_number }}
+            </div>
+          </div>
+
+          <div>
+            <div class="track-info-label">Party / Client</div>
+            <div class="track-info-val">
+              {% if parcel.party %}
+                <a href="{% url 'party_detail' parcel.party.pk %}">{{ parcel.party.name }}</a>
+              {% else %}
+                {{ parcel.party_name_text|default:"General Client" }}
+              {% endif %}
+            </div>
+          </div>
+
+          <div>
+            <div class="track-info-label">Private Identification Mark</div>
+            <div class="track-info-val">
+              <span class="mark-badge" style="font-size: 0.95rem;">{{ parcel.private_mark }}</span>
+            </div>
+          </div>
+
+          <div>
+            <div class="track-info-label">Package Count</div>
+            <div class="track-info-val">{{ parcel.package_count }} Package(s)</div>
+          </div>
+
+          <div class="full-width">
+            <div class="track-info-label">Goods Description</div>
+            <div class="track-info-val" style="font-size: 1rem; font-weight: 600;">
+              {{ parcel.goods_description }}
+            </div>
+          </div>
+
+          <div>
+            <div class="track-info-label">Weight</div>
+            <div class="track-info-val">{{ parcel.weight }} kg</div>
+          </div>
+
+          <div>
+            <div class="track-info-label">Receiving Date</div>
+            <div class="track-info-val">{{ parcel.receiving_date|date:"d M, Y" }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. Route & Party Details -->
+    <div class="panel">
+      <div class="panel-header">
+        <h3 class="panel-title"><span>🗺️</span> Route &amp; Contact Details</h3>
+      </div>
+      <div class="panel-body">
+        <div class="form-grid">
+          <div>
+            <div class="track-info-label">Source Origin</div>
+            <div class="track-info-val">{{ parcel.source }}</div>
+            <div style="font-size: 0.82rem; color: var(--slate-500);">Sender: {{ parcel.sender_name }} ({{ parcel.sender_city }})</div>
+          </div>
+
+          <div>
+            <div class="track-info-label">Destination Hub</div>
+            <div class="track-info-val">{{ parcel.destination }}</div>
+            <div style="font-size: 0.82rem; color: var(--slate-500);">Receiver: {{ parcel.receiver_name }} ({{ parcel.receiver_phone }})</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. Vehicle & Transport Details -->
+    <div class="panel">
+      <div class="panel-header">
+        <h3 class="panel-title"><span>🚛</span> Vehicle &amp; Driver Details</h3>
+      </div>
+      <div class="panel-body">
+        <div class="form-grid">
+          <div>
+            <div class="track-info-label">Vehicle Registration</div>
+            <div class="track-info-val">
+              {% if parcel.vehicle %}
+                <a href="{% url 'vehicle_detail' parcel.vehicle.pk %}">{{ parcel.vehicle.vehicle_number }}</a>
+                <span style="font-size: 0.8rem; color: var(--slate-500);">({{ parcel.vehicle.get_vehicle_type_display }})</span>
+              {% else %}
+                {{ parcel.vehicle_number_text|default:"Not Assigned Yet" }}
+              {% endif %}
+            </div>
+          </div>
+
+          <div>
+            <div class="track-info-label">Driver In-Charge</div>
+            <div class="track-info-val">
+              {{ parcel.get_effective_driver }}
+            </div>
+          </div>
+        </div>
+
+        {% if parcel.remarks %}
+          <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--slate-200);">
+            <div class="track-info-label">Special Remarks &amp; Instructions</div>
+            <p style="font-size: 0.9rem; color: var(--slate-700); margin-top: 0.25rem;">
+              {{ parcel.remarks }}
+            </p>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Right Column: Status Movement Timeline & Distribution -->
+  <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+    
+    <!-- Status Movement Audit Trail -->
+    <div class="panel">
+      <div class="panel-header">
+        <h3 class="panel-title"><span>🕒</span> Movement Timeline</h3>
+        <button type="button" class="btn btn-primary btn-sm" data-modal-target="status-update-modal">
+          + Add Update
+        </button>
+      </div>
+      <div class="panel-body">
+        
+        <div class="timeline">
+          {% for item in history %}
+            <div class="timeline-item {% if forloop.first %}active{% endif %}">
+              <div class="timeline-dot"></div>
+              <div class="timeline-content">
+                <div class="timeline-header">
+                  <span class="badge badge-{{ item.status|lower }}">
+                    {{ item.status|title }}
+                  </span>
+                  <span class="timeline-time">{{ item.timestamp|date:"d M, H:i" }}</span>
+                </div>
+                <div class="timeline-body">
+                  {% if item.location %}
+                    <div style="font-weight: 600; color: var(--slate-800); font-size: 0.82rem;">
+                      📍 {{ item.location }}
+                    </div>
+                  {% endif %}
+                  <div style="margin-top: 0.25rem;">
+                    {{ item.remarks|default:"Status checkpoint processed." }}
+                  </div>
+                  {% if item.updated_by %}
+                    <div style="font-size: 0.72rem; color: var(--slate-400); margin-top: 0.35rem;">
+                      Logged by: {{ item.updated_by.username }}
+                    </div>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+          {% empty %}
+            <p style="color: var(--slate-400); font-size: 0.85rem;">No status history recorded yet.</p>
+          {% endfor %}
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Local Distribution Tempo History -->
+    {% if distributions %}
+      <div class="panel">
+        <div class="panel-header">
+          <h3 class="panel-title"><span>🚚</span> Local Tempo Dispatches</h3>
+        </div>
+        <div class="panel-body">
+          {% for dist in distributions %}
+            <div style="background: var(--slate-50); border: 1px solid var(--slate-200); border-radius: var(--radius-md); padding: 1rem; margin-bottom: 0.75rem;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.35rem;">
+                <strong>{{ dist.destination_area }}</strong>
+                <span class="badge badge-{{ dist.delivery_status|lower }}">{{ dist.get_delivery_status_display }}</span>
+              </div>
+              <div style="font-size: 0.85rem; color: var(--slate-600);">
+                Tempo: {{ dist.tempo.vehicle_number|default:"Local Tempo" }}<br>
+                Driver: {{ dist.driver_name }} ({{ dist.driver_contact }})
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    {% endif %}
+
+  </div>
+
+</div>
+
+<!-- Modal: Update Parcel Status -->
+<div class="modal-backdrop" id="status-update-modal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3 class="modal-title">Update Consignment Status</h3>
+      <button type="button" class="modal-close">&times;</button>
+    </div>
+
+    <form method="POST" action="{% url 'update_parcel_status' parcel.pk %}">
+      {% csrf_token %}
+      <div class="modal-body">
+        
+        <div class="form-group">
+          <label class="form-label required">Select New Status</label>
+          <select name="status" class="form-select" required>
+            {% for code, label in status_choices %}
+              <option value="{{ code }}" {% if parcel.status == code %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Current Location / Hub</label>
+          <input type="text" name="location" class="form-input" value="{{ parcel.destination|default:'Surat Hub' }}" placeholder="e.g. Ahmedabad Ring Road Hub, Unloaded at Godown">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Update Remarks / Event Details</label>
+          <textarea name="remarks" class="form-textarea" rows="3" placeholder="e.g. Unloaded from Surat main line truck, inspected and staged for tempo loading."></textarea>
+        </div>
+
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary modal-close">Cancel</button>
+        <button type="submit" class="btn btn-primary">Save Status &amp; Log History</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+{% endblock %}

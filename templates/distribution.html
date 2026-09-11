@@ -1,0 +1,264 @@
+{% extends 'base_admin.html' %}
+{% load static %}
+
+{% block page_title %}Local Delivery &amp; Distribution Hub{% endblock %}
+
+{% block content %}
+
+<!-- Workflow Diagram Banner -->
+<div style="background: linear-gradient(135deg, #0f172a, #1e3a8a); color: #ffffff; border-radius: var(--radius-lg); padding: 1.75rem; margin-bottom: 2rem; box-shadow: var(--shadow-md);">
+  <div style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: #38bdf8; font-weight: 700; margin-bottom: 0.5rem;">
+    Distribution Pipeline Architecture
+  </div>
+  <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
+    
+    <div style="display: flex; align-items: center; gap: 0.75rem;">
+      <div style="width: 44px; height: 44px; border-radius: var(--radius-md); background: rgba(56, 189, 248, 0.2); display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">
+        🚛
+      </div>
+      <div>
+        <strong style="font-size: 1.05rem;">Main Line Truck</strong>
+        <div style="font-size: 0.8rem; color: #cbd5e1;">Arrives from Surat Hub</div>
+      </div>
+    </div>
+
+    <div style="font-size: 1.5rem; color: #38bdf8; font-weight: 800;">➔</div>
+
+    <div style="display: flex; align-items: center; gap: 0.75rem;">
+      <div style="width: 44px; height: 44px; border-radius: var(--radius-md); background: rgba(139, 92, 246, 0.2); display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">
+        🏭
+      </div>
+      <div>
+        <strong style="font-size: 1.05rem;">Unload &amp; Sort</strong>
+        <div style="font-size: 0.8rem; color: #cbd5e1;">Staged by Private Mark</div>
+      </div>
+    </div>
+
+    <div style="font-size: 1.5rem; color: #38bdf8; font-weight: 800;">➔</div>
+
+    <div style="display: flex; align-items: center; gap: 0.75rem;">
+      <div style="width: 44px; height: 44px; border-radius: var(--radius-md); background: rgba(16, 185, 129, 0.2); display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">
+        🚚
+      </div>
+      <div>
+        <strong style="font-size: 1.05rem;">Local Tempo / Pickup</strong>
+        <div style="font-size: 0.8rem; color: #cbd5e1;">Assigned to Route Driver</div>
+      </div>
+    </div>
+
+    <div style="font-size: 1.5rem; color: #38bdf8; font-weight: 800;">➔</div>
+
+    <div style="display: flex; align-items: center; gap: 0.75rem;">
+      <div style="width: 44px; height: 44px; border-radius: var(--radius-md); background: rgba(245, 158, 11, 0.2); display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">
+        🚪
+      </div>
+      <div>
+        <strong style="font-size: 1.05rem;">Party Doorstep</strong>
+        <div style="font-size: 0.8rem; color: #cbd5e1;">Signed Delivery &amp; Seal</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="detail-layout-grid" style="grid-template-columns: 1.35fr 1.65fr;">
+  
+  <!-- Left Column: Assign Incoming Parcel to Tempo Form -->
+  <div class="panel">
+    <div class="panel-header">
+      <h3 class="panel-title"><span>➕</span> Dispatch Parcel to Local Tempo</h3>
+    </div>
+    <div class="panel-body">
+      
+      <form method="POST" action="{% url 'distribution_list' %}">
+        {% csrf_token %}
+
+        <div class="form-group">
+          <label class="form-label required">Select Parcel / Consignment</label>
+          {{ assignment_form.parcel }}
+          <span class="form-helper">Choose from arrived or staged incoming parcels</span>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label required">Select Local Tempo</label>
+          {{ assignment_form.tempo }}
+        </div>
+
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label required">Tempo Driver Name</label>
+            {{ assignment_form.driver_name }}
+          </div>
+
+          <div class="form-group">
+            <label class="form-label required">Driver Phone</label>
+            {{ assignment_form.driver_contact }}
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label required">Destination Market / Area</label>
+          {{ assignment_form.destination_area }}
+          <span class="form-helper">e.g. <code>Maskati Cloth Market, Kalupur Ward 4, Ring Road Godown</code></span>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label required">Initial Dispatch Status</label>
+          {{ assignment_form.delivery_status }}
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Gate Pass &amp; Delivery Notes</label>
+          {{ assignment_form.notes }}
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">
+          🚚 Assign to Tempo &amp; Dispatch
+        </button>
+      </form>
+
+    </div>
+  </div>
+
+  <!-- Right Column: Staged Parcels Waiting For Tempo Assignment -->
+  <div class="panel">
+    <div class="panel-header">
+      <h3 class="panel-title"><span>📦</span> Parcels Ready for Local Dispatch</h3>
+      <span class="badge badge-sorted">{{ unassigned_parcels.count }} Pending</span>
+    </div>
+    <div class="panel-body" style="padding: 0;">
+      <div class="table-responsive">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>LR Number</th>
+              <th>Party Name</th>
+              <th>Mark</th>
+              <th>Dest City</th>
+              <th>Pkgs</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for parcel in unassigned_parcels %}
+              <tr>
+                <td>
+                  <a href="{% url 'parcel_detail' parcel.pk %}" style="font-family: var(--font-mono); font-weight: 700; color: var(--primary-700);">
+                    {{ parcel.consignment_number }}
+                  </a>
+                </td>
+                <td><strong>{{ parcel.get_party_display }}</strong></td>
+                <td><span class="mark-badge">{{ parcel.private_mark }}</span></td>
+                <td>{{ parcel.destination }}</td>
+                <td>{{ parcel.package_count }}</td>
+                <td>
+                  <span class="badge badge-{{ parcel.status|lower }}">
+                    {{ parcel.get_status_display }}
+                  </span>
+                </td>
+                <td>
+                  <button type="button" class="btn btn-secondary btn-sm" onclick="document.getElementById('id_parcel').value='{{ parcel.pk }}'; document.getElementById('id_parcel').scrollIntoView({behavior: 'smooth'});">
+                    Select &darr;
+                  </button>
+                </td>
+              </tr>
+            {% empty %}
+              <tr>
+                <td colspan="7" style="text-align: center; padding: 2rem; color: var(--slate-400);">
+                  All arrived parcels have been dispatched to local delivery tempos!
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Active Local Tempo Dispatches Table -->
+<div class="panel" style="margin-top: 2rem;">
+  <div class="panel-header">
+    <h3 class="panel-title"><span>🚚</span> Active Local Tempo Runs &amp; Delivery Tracking</h3>
+    <span class="badge badge-received">{{ active_assignments.count }} Active Dispatches</span>
+  </div>
+  <div class="panel-body" style="padding: 0;">
+    <div class="table-responsive">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Consignment</th>
+            <th>Party &amp; Private Mark</th>
+            <th>Tempo Number</th>
+            <th>Driver &amp; Phone</th>
+            <th>Delivery Area</th>
+            <th>Status</th>
+            <th>Assigned Date</th>
+            <th>Update Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for dist in active_assignments %}
+            <tr>
+              <td>
+                <a href="{% url 'parcel_detail' dist.parcel.pk %}" style="font-family: var(--font-mono); font-weight: 700; color: var(--primary-700);">
+                  {{ dist.parcel.consignment_number }}
+                </a>
+              </td>
+              <td>
+                <strong>{{ dist.parcel.get_party_display }}</strong><br>
+                <span class="mark-badge">{{ dist.parcel.private_mark }}</span>
+              </td>
+              <td>
+                <strong>{{ dist.tempo.vehicle_number|default:"Local Tempo" }}</strong>
+              </td>
+              <td>
+                {{ dist.driver_name }}<br>
+                <span style="font-size: 0.78rem; color: var(--slate-500);">📞 {{ dist.driver_contact }}</span>
+              </td>
+              <td>
+                <span style="font-weight: 600; color: var(--slate-800);">{{ dist.destination_area }}</span>
+              </td>
+              <td>
+                <span class="badge badge-{{ dist.delivery_status|lower }}">
+                  {{ dist.get_delivery_status_display }}
+                </span>
+              </td>
+              <td style="font-size: 0.8rem; color: var(--slate-500); white-space: nowrap;">
+                {{ dist.assigned_date|date:"d M, H:i" }}
+              </td>
+              <td>
+                <form method="POST" action="{% url 'update_distribution_status' dist.pk %}" style="display: flex; gap: 0.4rem; align-items: center;">
+                  {% csrf_token %}
+                  <select name="delivery_status" class="form-select" style="padding: 0.3rem 0.5rem; font-size: 0.8rem;">
+                    <option value="ASSIGNED" {% if dist.delivery_status == 'ASSIGNED' %}selected{% endif %}>Assigned</option>
+                    <option value="LOADED" {% if dist.delivery_status == 'LOADED' %}selected{% endif %}>Loaded</option>
+                    <option value="OUT_FOR_DELIVERY" {% if dist.delivery_status == 'OUT_FOR_DELIVERY' %}selected{% endif %}>Out For Delivery</option>
+                    <option value="COMPLETED" {% if dist.delivery_status == 'COMPLETED' %}selected{% endif %}>✓ Delivered</option>
+                    <option value="FAILED" {% if dist.delivery_status == 'FAILED' %}selected{% endif %}>Failed</option>
+                  </select>
+                  <button type="submit" class="btn btn-primary btn-sm" title="Save Status">✓</button>
+                </form>
+              </td>
+            </tr>
+          {% empty %}
+            <tr>
+              <td colspan="8" style="text-align: center; padding: 2.5rem; color: var(--slate-400);">
+                No local tempo dispatches registered yet.
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Embedded JSON for Tempo Auto-Fills -->
+<script id="tempos-json-data" type="application/json">
+  {{ tempos_json|safe }}
+</script>
+
+{% endblock %}

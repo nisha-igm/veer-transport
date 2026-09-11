@@ -1,0 +1,153 @@
+{% extends 'base_admin.html' %}
+{% load static %}
+
+{% block page_title %}Party Profile - {{ party.name }}{% endblock %}
+
+{% block content %}
+
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+  <div>
+    <a href="{% url 'party_list' %}" class="btn btn-secondary btn-sm" style="margin-bottom: 0.5rem;">
+      &larr; Back to Parties List
+    </a>
+    <div style="display: flex; align-items: center; gap: 0.75rem;">
+      <h2 style="font-size: 1.6rem; font-weight: 800; color: var(--slate-900);">
+        {{ party.name }}
+      </h2>
+      <span class="mark-badge" style="font-size: 0.95rem;">
+        Mark: {{ party.private_mark }}
+      </span>
+    </div>
+  </div>
+
+  <div style="display: flex; gap: 0.75rem;">
+    <a href="{% url 'parcel_create' %}?party_id={{ party.pk }}" class="btn btn-primary">
+      <span>➕</span> Book Consignment for Party
+    </a>
+    <a href="{% url 'party_edit' party.pk %}" class="btn btn-secondary">
+      ✏️ Edit Profile
+    </a>
+  </div>
+</div>
+
+<!-- Party Stats & Info Card -->
+<div class="metrics-grid" style="grid-template-columns: repeat(3, 1fr); margin-bottom: 1.5rem;">
+  <div class="metric-card">
+    <div class="metric-data">
+      <h4>Total Shipments</h4>
+      <div class="metric-value">{{ total_parcels }}</div>
+    </div>
+    <div class="metric-icon-box metric-blue">📦</div>
+  </div>
+
+  <div class="metric-card">
+    <div class="metric-data">
+      <h4>Pending Deliveries</h4>
+      <div class="metric-value">{{ pending_parcels }}</div>
+    </div>
+    <div class="metric-icon-box metric-amber">⏳</div>
+  </div>
+
+  <div class="metric-card">
+    <div class="metric-data">
+      <h4>Delivered Consignments</h4>
+      <div class="metric-value">{{ delivered_parcels }}</div>
+    </div>
+    <div class="metric-icon-box metric-green">✅</div>
+  </div>
+</div>
+
+<!-- Profile Details Panel -->
+<div class="panel" style="margin-bottom: 1.75rem;">
+  <div class="panel-header">
+    <h3 class="panel-title"><span>📋</span> Business &amp; Contact Information</h3>
+  </div>
+  <div class="panel-body">
+    <div class="form-grid">
+      <div>
+        <div class="track-info-label">Contact Person</div>
+        <div class="track-info-val">{{ party.contact_person }}</div>
+      </div>
+      <div>
+        <div class="track-info-label">Phone Number</div>
+        <div class="track-info-val">{{ party.phone }}</div>
+      </div>
+      <div>
+        <div class="track-info-label">Station City</div>
+        <div class="track-info-val">{{ party.city }}</div>
+      </div>
+      <div>
+        <div class="track-info-label">GST Number</div>
+        <div class="track-info-val" style="font-family: var(--font-mono);">
+          {{ party.gst_number|default:"Not Registered / Non-GST" }}
+        </div>
+      </div>
+      <div class="full-width">
+        <div class="track-info-label">Registered Godown / Office Address</div>
+        <div class="track-info-val" style="font-size: 0.95rem; font-weight: 500;">
+          {{ party.address }}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Associated Parcels Registry Table -->
+<div class="panel">
+  <div class="panel-header">
+    <h3 class="panel-title"><span>📦</span> Associated Parcels &amp; Consignments ({{ total_parcels }})</h3>
+  </div>
+  <div class="panel-body" style="padding: 0;">
+    <div class="table-responsive">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>LR Number</th>
+            <th>Private Mark</th>
+            <th>Route</th>
+            <th>Packages / Wt</th>
+            <th>Goods Description</th>
+            <th>Booking Date</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for p in parcels %}
+            <tr>
+              <td>
+                <a href="{% url 'parcel_detail' p.pk %}" style="font-family: var(--font-mono); font-weight: 700; color: var(--primary-700);">
+                  {{ p.consignment_number }}
+                </a>
+              </td>
+              <td><span class="mark-badge">{{ p.private_mark }}</span></td>
+              <td>{{ p.source }} &rarr; <strong>{{ p.destination }}</strong></td>
+              <td>{{ p.package_count }} pkgs ({{ p.weight }} kg)</td>
+              <td>{{ p.goods_description|truncatechars:30 }}</td>
+              <td>{{ p.receiving_date|date:"d M, Y" }}</td>
+              <td>
+                <span class="badge badge-{{ p.status|lower }}">
+                  {{ p.get_status_display }}
+                </span>
+              </td>
+              <td>
+                <div style="display: flex; gap: 0.4rem;">
+                  <a href="{% url 'parcel_detail' p.pk %}" class="btn btn-secondary btn-sm" title="View">👁️</a>
+                  <a href="{% url 'parcel_receipt' p.pk %}" class="btn btn-secondary btn-sm" title="Print Receipt">🖨️</a>
+                </div>
+              </td>
+            </tr>
+          {% empty %}
+            <tr>
+              <td colspan="8" style="text-align: center; padding: 2.5rem; color: var(--slate-400);">
+                No consignments registered for this party yet.
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

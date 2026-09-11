@@ -1,0 +1,126 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ title|default:"Operations Dashboard" }} | Veer Transport Desk</title>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <link rel="stylesheet" href="{% static 'css/print.css' %}" media="print">
+  <link rel="icon" type="image/svg+xml" href="{% static 'images/logo.svg' %}">
+  {% block extra_head %}{% endblock %}
+</head>
+<body>
+
+<div class="admin-layout">
+
+  <!-- Admin Sidebar Navigation -->
+  <aside class="admin-sidebar">
+    <div class="sidebar-header">
+      <img src="{% static 'images/logo.svg' %}" alt="Logo" style="height: 36px; filter: brightness(0) invert(1);">
+    </div>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-title">Main Operations</li>
+      <li>
+        <a href="{% url 'dashboard' %}" class="sidebar-nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+          <span>📊</span> Dashboard
+        </a>
+      </li>
+      <li>
+        <a href="{% url 'parcel_list' %}" class="sidebar-nav-link {% if 'parcel' in request.resolver_match.url_name and request.resolver_match.url_name != 'parcel_create' %}active{% endif %}">
+          <span>📦</span> Parcel Registry
+        </a>
+      </li>
+      <li>
+        <a href="{% url 'parcel_create' %}" class="sidebar-nav-link {% if request.resolver_match.url_name == 'parcel_create' %}active{% endif %}">
+          <span>➕</span> New Goods Entry
+        </a>
+      </li>
+      <li>
+        <a href="{% url 'distribution_list' %}" class="sidebar-nav-link {% if request.resolver_match.url_name == 'distribution_list' %}active{% endif %}">
+          <span>🚚</span> Local Distribution
+        </a>
+      </li>
+
+      <li class="sidebar-nav-title">Management</li>
+      <li>
+        <a href="{% url 'party_list' %}" class="sidebar-nav-link {% if 'party' in request.resolver_match.url_name %}active{% endif %}">
+          <span>🏢</span> Parties / Customers
+        </a>
+      </li>
+      <li>
+        <a href="{% url 'vehicle_list' %}" class="sidebar-nav-link {% if 'vehicle' in request.resolver_match.url_name %}active{% endif %}">
+          <span>🚛</span> Fleet &amp; Vehicles
+        </a>
+      </li>
+
+      <li class="sidebar-nav-title">Shortcuts</li>
+      <li>
+        <a href="{% url 'public_tracking' %}" target="_blank" class="sidebar-nav-link">
+          <span>🔍</span> Public Tracker ↗
+        </a>
+      </li>
+      <li>
+        <a href="{% url 'home' %}" target="_blank" class="sidebar-nav-link">
+          <span>🌐</span> View Public Site ↗
+        </a>
+      </li>
+    </ul>
+
+    <div class="sidebar-user">
+      <div>
+        <div style="font-weight: 700; font-size: 0.88rem; color: #ffffff;">{{ user.username|title }}</div>
+        <div style="font-size: 0.75rem; color: #94a3b8;">Transport Operator</div>
+      </div>
+      <a href="{% url 'admin_logout' %}" class="btn btn-sm btn-dark" style="border: 1px solid #475569;" title="Logout">
+        🚪
+      </a>
+    </div>
+  </aside>
+
+  <!-- Admin Main Content Area -->
+  <div class="admin-main">
+    
+    <!-- Top Navigation Bar -->
+    <header class="admin-topbar">
+      <div style="display: flex; align-items: center; gap: 1rem;">
+        <button class="menu-toggle-btn" aria-label="Toggle sidebar">☰</button>
+        <h1 class="topbar-title">{% block page_title %}{{ title|default:"Operations Dashboard" }}{% endblock %}</h1>
+      </div>
+
+      <div class="topbar-actions">
+        <a href="{% url 'parcel_create' %}" class="btn btn-primary btn-sm">
+          <span>➕</span> New Consignment
+        </a>
+        <a href="{% url 'admin_logout' %}" class="btn btn-secondary btn-sm">
+          Logout
+        </a>
+      </div>
+    </header>
+
+    <!-- Flash Messages Container -->
+    <div style="padding: 1.5rem 2rem 0;">
+      {% if messages %}
+        {% for message in messages %}
+          <div class="alert alert-{{ message.tags|default:'info' }}">
+            <span>{{ message }}</span>
+            <button type="button" class="modal-close" onclick="this.parentElement.remove()" style="font-size: 1.2rem;">&times;</button>
+          </div>
+        {% endfor %}
+      {% endif %}
+    </div>
+
+    <!-- Main Content Body -->
+    <main class="admin-content">
+      {% block content %}{% endblock %}
+    </main>
+
+  </div>
+
+</div>
+
+<script src="{% static 'js/script.js' %}"></script>
+{% block extra_js %}{% endblock %}
+</body>
+</html>
